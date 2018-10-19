@@ -1,1 +1,3 @@
 __pycache__
+book/settings_secret.py
+db.sqlite3
