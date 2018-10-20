@@ -7,7 +7,7 @@ def signup(request):
 	if request.method == 'POST':
 		form = UserCreationForm(request.POST)
 		if form.is_valid():
-			#Save the User to the DB
+			# Save the user to the DB
 			form.save()
 			messages.success(request, 'Account created successfully')
 	else:
@@ -17,3 +17,6 @@ def signup(request):
 
 def home(request):
 	return render(request, 'home.html')
+
+def gsignin(request):
+	return render(request, "g-signin.html")

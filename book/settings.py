@@ -125,5 +125,6 @@ STATICFILES_DIRS = [
 ]
 
 # Redirects for login and logout
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = '/api'
 LOGOUT_REDIRECT_URL = 'home'
+
