@@ -6,8 +6,8 @@
 	<body>
 		{% block content %}
 			{% if request.user.is_authenticated %}
-				<p>{{ user.username }} - <a href="{% url 'logout' %}">Logout</a></p>
+				<p>{{ user.username }} - <button href="{% url 'logout' %}">Logout</button></p>
 			{% else %}
-				<p>You are not logged in - <a href="{% url 'login' %}">Login</a> or <a href="{% url 'signup' %}">SignUp</a></p>
+				<p>You are not logged in - <button href="{% url 'login' %}">Login</a> or <button href="{% url 'signup' %}">SignUp</a></p>
 			{% endif %}
 		{% endblock %}

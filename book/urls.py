@@ -19,6 +19,7 @@ from django.urls import path, include
 from book.views import signup, home
 from book_api.views import api_home
 from book_webapp.views import webapp_home
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
 #    path('admin/', admin.site.urls),
@@ -28,3 +29,5 @@ urlpatterns = [
     path('api/', api_home, name='api_home'),
     path('webapp/', webapp_home, name='webapp_home'),
 ]
+
+urlpatterns += staticfiles_urlpatterns()

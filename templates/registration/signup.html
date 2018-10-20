@@ -1,4 +1,6 @@
 {% block content %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static "css/base.css" %}">
   <h2>Sign up</h2>
   <form method="post">
     {% csrf_token %}
