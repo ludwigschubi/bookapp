@@ -11,10 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-#from .settings_secret import *
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from .settings_secret import *
 
 
 # Quick-start development settings - unsuitable for production
@@ -23,20 +20,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-SECRET_KEY="KARTOFFEL"
-
-# Application definition
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,9 +30,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-AUTHENTICATION_BACKENDS = (
-    'oauth2_provider.backends.OAuth2Backend',
-)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
