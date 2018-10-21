@@ -22,13 +22,15 @@ DEBUG = True
 
 
 INSTALLED_APPS = [
-    'book',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'book',
+    'book_api',
+    'book_webapp',
 ]
 
 

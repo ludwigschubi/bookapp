@@ -17,8 +17,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 from book.views import signup, home, gsignin, books
-from book_api.views import api_home
-from book_webapp.views import webapp_home
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.auth import views as auth_views
 
@@ -27,8 +25,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/signup', signup),
     path('', home, name='home'),
-    path('api/', api_home, name='api_home'),
-    path('webapp/', webapp_home, name='webapp_home'),
+    path('api/', include('book_api.urls')),
+    path('webapp/', include('book_webapp.urls')),
     path("g-signin/", gsignin, name="g-signin"),
     path("books/", books, name="books")
 ]
