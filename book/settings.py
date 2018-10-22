@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'book',
     'book_api',
     'book_webapp',
@@ -112,3 +113,9 @@ STATICFILES_DIRS = [
 LOGIN_REDIRECT_URL = '/api'
 LOGOUT_REDIRECT_URL = 'home'
 
+
+# Global settings for the restframework module
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
