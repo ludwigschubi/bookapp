@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from book.views import signup, home, gsignin, books
+from book.views import signup, home, gsignin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.auth import views as auth_views
 
@@ -27,8 +27,9 @@ urlpatterns = [
     path('', home, name='home'),
     path('api/', include('book_api.urls')),
     path('webapp/', include('book_webapp.urls')),
+    path('auth', include('book_auth.urls')),
     path("g-signin/", gsignin, name="g-signin"),
-    path("books/", books, name="books")
+#    path("books/", books, name="books")
 ]
 
 urlpatterns += staticfiles_urlpatterns()
