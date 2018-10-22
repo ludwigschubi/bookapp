@@ -35,8 +35,8 @@ class BookForm(ModelForm):
         fields = ["isbn", "title", "author", "price", "owningCustomer"]
 
 class BookRental(models.Model):
-    owningCustomer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    rentingCustomer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    owningCustomer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='owner')
+    rentingCustomer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='renter')
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     fromDate = models.DateField()
     toDate = models.DateField()
