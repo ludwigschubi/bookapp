@@ -1,7 +1,7 @@
 from django.urls import path, include
 
-from book_webapp.views import webapp_home
+from book_webapp.views import home
 
 urlpatterns = [
-    path('', webapp_home),
+    path('',home ,name="home"),
 ]
