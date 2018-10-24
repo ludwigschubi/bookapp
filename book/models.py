@@ -1,8 +1,10 @@
 from django.db import models
 from django.forms import ModelForm
 
-class Country(models.Model):
-    countryName = models.CharField(max_length=20)
+class Countries(models.Model):
+    name = models.CharField(max_length=20)
+    isoCode = models.CharField(max_length=2)
+    isdCode = models.CharField(max_length=7, null=True)
 
 class Customer(models.Model):
     firstName = models.CharField(max_length=20)
@@ -12,7 +14,7 @@ class Customer(models.Model):
     streetNumber = models.CharField(max_length=20)
     postalCode = models.SmallIntegerField()
     city = models.CharField(max_length=20)
-    country = models.OneToOneField(Country, on_delete=models.CASCADE)
+    country = models.ForeignKey(Countries, on_delete=models.CASCADE)
     telephone = models.CharField(max_length=20)
     email = models.EmailField()
 
@@ -25,7 +27,11 @@ class Book(models.Model):
     isbn = models.CharField(max_length=15)
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
+<<<<<<< HEAD
     cover = models.URLField(max_length=200)
+=======
+    cover = models.ImageField(null=True)
+>>>>>>> 91e61d9f227fcd6be8a502a65ba13038e1f4778a
     price = models.FloatField()
     owningCustomer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
