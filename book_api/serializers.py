@@ -5,7 +5,7 @@ from book.models import Book, Customer
 class BookSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Book
-        fields = ('isbn', 'title', 'author', 'cover', 'price', 'owningCustomer_id')
+        fields = ('isbn', 'title', 'author', 'cover', 'price', 'owning_customer_id')
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

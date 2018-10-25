@@ -1,4 +1,4 @@
-INSERT INTO book_countries (name, isoCode, isdCode) VALUES
+INSERT INTO book_countries (name, iso_code, isd_code) VALUES
 ('Afghanistan', 'AF', '93'),
 ('Albania', 'AL', '355'),
 ('Algeria', 'DZ', '213'),

@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.decorators import action
 
 from book_api.serializers import BookSerializer, CustomerSerializer
 from book.models import Book, Customer
@@ -7,11 +8,9 @@ class Book(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-    def create(self, request):
-        # check if user is allowed to add new books
-        # check if the attributes are valid
-        # add book
-        pass
+    @action (detail=True, methods=['post', 'get'])
+    def new(self, request):
+        return request.data
 
     def update(self, request, pk=None):
         # check if user is the owner of a book
