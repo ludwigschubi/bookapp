@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 
 from book_api.serializers import BookSerializer, CustomerSerializer
 from book.models import Book, Customer
@@ -34,6 +34,8 @@ class Book(viewsets.ModelViewSet):
     def search(self, request):
         pass
 
-class Customer(viewsets.ModelViewSet):
+class Customer(viewsets.GenericViewSet,
+                mixins.ListModelMixin,
+                mixins.RetrieveModelMixin):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
