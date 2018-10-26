@@ -40,5 +40,5 @@ class BookRental(models.Model):
     owning_customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='owner')
     renting_customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='renter')
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    fromDate = models.DateField()
-    toDate = models.DateField()
+    from_date = models.DateField()
+    to_date = models.DateField()
