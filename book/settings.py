@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     'book',
     'book_api',
     'book_webapp',
-    'book_auth',
 ]
 
 
