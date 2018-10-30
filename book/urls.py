@@ -16,14 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from book.views import gsignin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.contrib.auth import views as auth_views
 
 urlpatterns = [
 #    path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/gsignin', gsignin),
     path('api/', include('book_api.urls')),
     path('', include('book_webapp.urls'))
 ]
