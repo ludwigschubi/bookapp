@@ -1,8 +1,7 @@
-from rest_framework import status
-
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -54,7 +53,7 @@ def logout(request):
 
 @csrf_exempt
 @api_view(["GET"])
-def userAddressList(request):
+def userAddressShow(request):
     try:
         queryset = UserAddress.objects.get(user=request.user)
     except UserAddress.DoesNotExist:
@@ -95,31 +94,73 @@ def userAddressUpdate(request):
 #
 
 
-
 #
 # book operations
 #
 
+@csrf_exempt
+@api_view(["GET"])
 def bookList(request):
-    pass
+    books = Book.objects.all()
+    serialized = BookSerializer(books, many=True)
+    return Response(serialized.data)
 
+@csrf_exempt
+@api_view(["GET"])
 def bookListOwn(request):
-    pass
+    books = Book.objects.filter(owner=request.user)
+    serialized = BookSerializer(books, many=True)
+    return Response(serialized.data)
 
+@csrf_exempt
+@api_view(["GET"])
+def bookShow(request, bookId):
+    try:
+        book = Book.objects.get(id=bookId)
+    except Book.DoesNotExist:
+        return Response({"error": "No such book"}, status=status.HTTP_400_BAD_REQUEST)
+    serialized = BookSerializer(book)
+    return Response(serialized.data, status=status.HTTP_200_OK)
+
+@csrf_exempt
+@api_view(["POST"])
 def bookCreate(request):
-    pass
+    serialized = BookSerializer(data=request.data)
+    if serialized.is_valid():
+        serialized.save()
+        return Response({"success": "Successfully created"}, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
 
-def bookUpdate(request):
-    # check if user is the owner of a book
-    # check if the attributes are valid
-    # update book
-    pass
+@csrf_exempt
+@api_view(["PUT"])
+def bookUpdate(request, bookId):
+    try:
+        book = Book.objects.get(id=bookId)
+    except Book.DoesNotExist:
+        return Response({"error": "No such object"}, status=status.HTTP_400_BAD_REQUEST)
+    if not book.owner == request.user:
+        return Response({"error": "Not owner of the book"}, status=status.HTTP_400_BAD_REQUEST)
+    serialized = BookSerializer(data=request.data)
+    if serialized.is_valid():
+        serialized.save()
+        return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
+    else:
+        return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
 
-def bookDestroy(request):
-    # check if user is the owner of a book
-    # check if there are no pending rentals
-    # delete book
-    pass
+@csrf_exempt
+@api_view(["GET"])
+def bookDestroy(request, bookId):
+    try:
+        book = Book.objects.get(id=bookId)
+    except Book.DoesNotExist:
+        return Response({"error": "No such object"}, status=status.HTTP_400_BAD_REQUEST)
+    if not book.owner == request.user:
+        return Response({"error": "Not owner of the book"}, status=status.HTTP_400_BAD_REQUEST)
+    book.delete()
+    return Response({"success": "Successfully deleted"}, status=status.HTTP_200_OK)
 
+@csrf_exempt
+@api_view(["GET"])
 def bookSearch(request):
-    pass
+    return Response({"error": "Not implemented yet"}, status=status.HTTP_400_BAD_REQUEST)
