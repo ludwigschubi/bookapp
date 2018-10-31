@@ -20,12 +20,12 @@ class UserAddressSerializer(serializers.ModelSerializer):
         model = UserAddress
         fields = ('user', 'sex', 'street', 'street_number', 'postal_code', 'city', 'country', 'telephone')
 
-class BookSerializer(serializers.HyperlinkedModelSerializer):
+class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ('isbn', 'title', 'author', 'cover', 'price', 'owner_id')
+        fields = ('id', 'isbn', 'title', 'author', 'cover', 'price', 'owner')
 
-class RentalSerializer(serializers.HyperlinkedModelSerializer):
+class RentalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rental
         fields = ('renter', 'book', 'from_data', 'to_date')

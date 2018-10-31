@@ -2,20 +2,21 @@ from django.urls import path, include
 from django.conf.urls import url
 
 from book_api.views import register, login, logout
-from book_api.views import userAddressList, userAddressCreate, userAddressUpdate
-from book_api.views import bookList, bookListOwn, bookCreate, bookUpdate, bookDestroy, bookSearch
+from book_api.views import userAddressShow, userAddressCreate, userAddressUpdate
+from book_api.views import bookList, bookListOwn, bookShow, bookCreate, bookUpdate, bookDestroy, bookSearch
 
 urlpatterns = [
-    url('auth/register', register),
-    url('auth/login', login),
-    url('auth/logout', logout),
-    url('userAddress/list', userAddressList),
-    url('userAddress/create', userAddressCreate),
-    url('userAddress/update', userAddressUpdate),
-    url('book/list', bookList),
-    url('book/listOwn', bookListOwn),
-    url('book/create', bookCreate),
-    url('book/update', bookUpdate),
-    url('book/destroy', bookDestroy),
-    url('book/search', bookSearch),
+    path('auth/register', register),
+    path('auth/login', login),
+    path('auth/logout', logout),
+    path('userAddress/show', userAddressList),
+    path('userAddress/create', userAddressCreate),
+    path('userAddress/update', userAddressUpdate),
+    path('book/list/', bookList),
+    path('book/listOwn/', bookListOwn),
+    path('book/show/<int:bookId>/', bookShow),
+    path('book/create/', bookCreate),
+    path('book/update/<int:bookId>/', bookUpdate),
+    path('book/destroy/<int:bookId>/', bookDestroy),
+    path('book/search/', bookSearch),
 ]
