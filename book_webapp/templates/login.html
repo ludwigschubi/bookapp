@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block head %}
+    <head>
+        <title>Login</title>
+        <input type="text" id="username"> 
+        <input type="password" id="password">
+        <button id="login">Login</button>
+    </head>
+{% endblock %}
+{% block body %}
+{% load static %}
+    <body>
+        <script type="text/javascript" src="{% static "js/jquery.js"%}"></script>
+        <script type="text/javascript" src="{% static "js/login.js"%}"></script>
+    </body>
+{% endblock %}

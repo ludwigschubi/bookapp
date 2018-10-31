@@ -1,7 +1,8 @@
 from django.urls import path, include
 
-#from book_webapp.views import home
+from book_webapp.views import home, login
 
 urlpatterns = [
-#    path('',home ,name="home"),
+    path('', home),
+    path('login', login),
 ]

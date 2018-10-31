@@ -1,14 +1,25 @@
 {% extends "base.html" %}
 {% block head %}
     <head>
+        {% load static %}
         <title>Home</title>
-        <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
-        <meta name="google-signin-client_id" content="269235375979-jps756b3obi21h41iebkes9vhakola7u.apps.googleusercontent.com">
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <link href="{% static "css/base.css" %}" rel="stylesheet" type="text/css"
     </head>
 {% endblock %}
 {% block body %}
     <body>
+        <header>
+            <div class="container">
+                <img src="{% static "img/Download.png" %}" class="logo">
+                <nav>
+                    <ul id="loginSpace">
+                        <li><input type="text" id="usernameInput" placeholder="Enter your username"></li>
+                        <li><input type="password" id="passwordInput" placeholder="Enter your password"></li>
+                        <li id='loginListItem'><button id="loginButton">Login</button></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
         <p>Title</p>
         <input type ="text" id="title">
         <p>Author</p>
@@ -25,8 +36,8 @@
             {% endfor %}
         </div>
         <p id="books"></p>
-        {% load static %}
         <script type="text/javascript" src="{% static "js/jquery.js"%}"></script>
         <script type="text/javascript" src="{% static "js/main.js"%}"></script>
+        <script type="text/javascript" src="{% static "js/login.js"%}"></script>
     </body>
 {% endblock %}
