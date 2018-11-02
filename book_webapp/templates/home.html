@@ -20,24 +20,27 @@
                 </nav>
             </div>
         </header>
-        <p>Title</p>
+        <p>Title:</p>
         <input type ="text" id="title">
-        <p>Author</p>
+        <p>Author:</p>
         <input type ="text" id="author">
-        <p>Isbn</p>
+        <p>Isbn:</p>
         <input type ="text" id="isbn">
-        <p>Price</p>
+        <p>Cover-Url</p>
+        <input type ="text" id="cover">
+        <p>Price:</p>
         <input type ="number" step="0.1" id="price">
         <button id="create-book">Create a new entry</button>
-        <div id="posts">
-            {% for book in books %}
-                <h1>{{book.name}}</h1>
-                <p>{{book.author}}</p>
-            {% endfor %}
+        <div id="bookContainer">
+            <ul id="books">
+
+            </ul>
         </div>
-        <p id="books"></p>
         <script type="text/javascript" src="{% static "js/jquery.js"%}"></script>
-        <script type="text/javascript" src="{% static "js/main.js"%}"></script>
-        <script type="text/javascript" src="{% static "js/login.js"%}"></script>
+        <script type="module" src="{% static "js/home.js"%}"></script>
+        <script>
+            var token = "";
+            var user = {};
+        </script>
     </body>
 {% endblock %}

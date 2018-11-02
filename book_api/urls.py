@@ -6,12 +6,12 @@ from book_api.views import userAddressShow, userAddressCreate, userAddressUpdate
 from book_api.views import bookList, bookListOwn, bookShow, bookCreate, bookUpdate, bookDestroy, bookSearch
 
 urlpatterns = [
-    path('auth/register', register),
-    path('auth/login', login),
-    path('auth/logout', logout),
-    path('userAddress/show', userAddressList),
-    path('userAddress/create', userAddressCreate),
-    path('userAddress/update', userAddressUpdate),
+    path('auth/register/', register),
+    path('auth/login/', login),
+    path('auth/logout/', logout),
+    path('userAddress/show/', userAddressShow),
+    path('userAddress/create/', userAddressCreate),
+    path('userAddress/update/', userAddressUpdate),
     path('book/list/', bookList),
     path('book/listOwn/', bookListOwn),
     path('book/show/<int:bookId>/', bookShow),

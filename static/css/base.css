@@ -5,6 +5,7 @@ body {
 
 header {
     background: #FFF;
+    font-size: 2em;
 }
 
 header::after {
@@ -34,4 +35,10 @@ nav li {
     display: inline-block;
     margin-right: 30px;
     padding-top: 20px;
+}
+
+li p {
+    all: unset;
+    color: red;
+    font-size: 1em;
 }

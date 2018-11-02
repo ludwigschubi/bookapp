@@ -21,7 +21,7 @@ class Book(models.Model):
     isbn = models.CharField(max_length=20)
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
-    cover = models.URLField(max_length=200)
+    cover = models.URLField(max_length=300)
     price = models.FloatField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
