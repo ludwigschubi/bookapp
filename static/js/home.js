@@ -13,7 +13,6 @@ $("#create-book").click(function() {
     loadBooks();
 });
 
-
 /** create/
 Allowed method: POST
 Required attributes: isbn, title, author, cover, price, owner*/
@@ -103,15 +102,15 @@ function loginUser(){
     xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE){
             if(xhr.status === 200){
-                $("#loginListItem").remove();
+                $("#loginButton").remove();
                 $("#usernameInput").remove();
                 $("#passwordInput").remove();
-                $("#loginSpace").append("<li id='logoutListItem'><button id='logoutButton'>Logout</button></li>");
+                $("ul[name='loginSpace']").append('<li><a class="waves-effect waves-light btn" id="logoutButton">Logout<i class="material-icons right">account_circle</i></a></li>');
                 token = xhr.response.token;
                 showUser(token);
                 console.log("[DEBUG] Global token has been declared!")
             } else {
-                $("#loginSpace").append("<li id='loginError'><p>Invalid Login Credentials!</p></li>")
+                $("input[name='loginSpace']").append("<li id='loginError'><p>Invalid Login Credentials!</p></li>")
             }  
         };
     };
@@ -126,17 +125,44 @@ $("#loginButton").click(function() {
 });
 
 function displayBooks(fetchedBooks){
-    $("#books").empty();
+    $("#bookContainer").empty();
     for(var i=0; i<fetchedBooks.length; i++){
-        console.log(fetchedBooks.length);
-        let bookString = "<ul class='bookList" + i + "'></ul>";
-        $('#books').append(bookString);
-
-        let bookDataString = "<li class='bookIsbn'>" + fetchedBooks[i].isbn + "</li>"
-        bookDataString += "<li class='bookTitle'>" + fetchedBooks[i].title + "</li>"
-        bookDataString += "<li class='bookAuthor'>" + fetchedBooks[i].author + "</li>"
-        bookDataString += "<li class='bookCover'>" + fetchedBooks[i].cover + "</li>"
-        bookDataString += "<li class='bookPrice'>" + fetchedBooks[i].price + "</li>"
-        $(".bookList" + i).append(bookDataString);
+        let title = fetchedBooks[i].title;
+        let author = fetchedBooks[i].author;
+        let isbn = fetchedBooks[i].isbn;
+        let cover = fetchedBooks[i].cover;
+        let price = fetchedBooks[i].price;
+        let bookString = makeBookCard(title, author, isbn, cover, price);
+        $('#bookContainer').append(bookString);
     };
 }
+
+function makeBookCard(title, author, isbn, cover, price){
+    let bookCardString = `
+    <div class="row">
+        <div class="col s6 m7">
+        <div class="card">
+            <div class="card-image">
+            <img src="${cover}">
+            <span class="card-title">${title}</span>
+            </div>
+            <div class="card-content">
+            <p>This book was written by:<b>${author}</b></p>
+            <p>ISBN: <b>${isbn}</b></p>
+            <b>${price}</b>
+            </div>
+            <div class="card-action">
+            <a href="#">Rent this Book</a>
+            </div>
+        </div>
+        </div>
+    </div>`
+    return bookCardString;
+}
+
+/*<div class="dropdown-content">
+<p class="bookIsbn">ISBN: 4235263456</p>
+<p class="bookTitle">Learning Kali Linux</p>
+<p class="bookAuthor">written by: Ric Messier</p>
+<p class="bookPrice">3.6€ per day</p>
+</div>*/

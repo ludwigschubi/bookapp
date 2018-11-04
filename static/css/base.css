@@ -1,44 +1,17 @@
-body {
-    background: #000;
-    color: #FFF;
-}
-
-header {
-    background: #FFF;
-    font-size: 2em;
-}
-
-header::after {
-    content: '';
-    display: table;
-    clear: both;
-}
-
-.logo {
-    float: left;
-    height: 40px;
-    width: 5%;
-    padding: 10px 0;
-} 
-
 nav {
-    float: right;
+    background: rgb(38, 153, 251);
 }
 
-nav ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
 }
 
-nav li {
-    display: inline-block;
-    margin-right: 30px;
-    padding-top: 20px;
+main {
+    flex: 1 0 auto;
 }
 
-li p {
-    all: unset;
-    color: red;
-    font-size: 1em;
+footer {
+    background: rgb(38, 153, 251);
 }
