@@ -8,6 +8,43 @@ $('document').ready(function(){
     }, 10000)
 })
 
+let newBookFormString = `
+<div class="row">
+    <h3>Create a new book entry:</h3>
+</div>
+<div class="divider"></div>
+<div class="row">
+    <form class="col s10 offset-s1">
+        <div class="row">
+            <div class="input-field col s6">
+                <input type ="text" id="title">
+                <label for="title">Title</label>
+            </div>
+            <div class="input-field col s6">
+                <input type ="text" id="author">
+                <label for="author">Author</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type ="text" id="isbn">
+                <label for="isbn">ISBN</label>
+            </div>
+            <div class="input-field col s6">
+                <input type ="text" id="cover">
+                <label for="cover">Cover</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type ="number" step="0.1" id="price">
+                <label for="price">Price per day</label>
+            </div>
+        </div>
+    </form>
+</div>
+`
+
 $("#create-book").click(function() {
     createBook(user.user)
     loadBooks();
@@ -80,6 +117,48 @@ function loadBooks(){
 }
 
 /***
+ *    ███████╗██╗L██████╗L███╗LLL██╗██╗LLL██╗██████╗L
+ *    ██╔════╝██║██╔════╝L████╗LL██║██║LLL██║██╔══██╗
+ *    ███████╗██║██║LL███╗██╔██╗L██║██║LLL██║██████╔╝
+ *    ╚════██║██║██║LLL██║██║╚██╗██║██║LLL██║██╔═══╝L
+ *    ███████║██║╚██████╔╝██║L╚████║╚██████╔╝██║LLLLL
+ *    ╚══════╝╚═╝L╚═════╝L╚═╝LL╚═══╝L╚═════╝L╚═╝LLLLL
+ *    LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+ */
+
+function signupUser(){
+    const userData = {
+        username: $("#username").val(),
+        first_name: $('#firstName').val(),
+        last_name: $('#lastName').val(),
+        password: $("#password").val(),
+        email: $('#email').val(),
+    };
+
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:8000/api/auth/register/";
+
+    xhr.responseType = "json";
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE){
+            if(xhr.status === 201){
+                loginUser(userData.username, userData.password);
+            } else {
+                console.log('[DEBUG] Bad Request')
+            }  
+        };
+    };
+
+    xhr.open("POST", url);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(userData));
+}
+
+$("#signupButton").click(function() {
+    signupUser();
+});
+
+/***
  *    L█████╗L██╗LLL██╗████████╗██╗LL██╗███████╗███╗LLL██╗████████╗██╗L██████╗L█████╗L████████╗██╗L██████╗L███╗LLL██╗
  *    ██╔══██╗██║LLL██║╚══██╔══╝██║LL██║██╔════╝████╗LL██║╚══██╔══╝██║██╔════╝██╔══██╗╚══██╔══╝██║██╔═══██╗████╗LL██║
  *    ███████║██║LLL██║LLL██║LLL███████║█████╗LL██╔██╗L██║LLL██║LLL██║██║LLLLL███████║LLL██║LLL██║██║LLL██║██╔██╗L██║
@@ -89,10 +168,10 @@ function loadBooks(){
  *    LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
  */
 
-function loginUser(){
+function loginUser(username, password){
     const userData = {
-        username: $("#usernameInput").val(),
-        password: $("#passwordInput").val(),
+        username: username,
+        password: password,
     };
 
     var xhr = new XMLHttpRequest();
@@ -102,10 +181,8 @@ function loginUser(){
     xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE){
             if(xhr.status === 200){
-                $("#loginButton").remove();
-                $("#usernameInput").remove();
-                $("#passwordInput").remove();
-                $("ul[name='loginSpace']").append('<li><a class="waves-effect waves-light btn" id="logoutButton">Logout<i class="material-icons right">account_circle</i></a></li>');
+                $('#loginForm').remove();
+                $('#newBookContainer').append(newBookFormString);
                 token = xhr.response.token;
                 showUser(token);
                 console.log("[DEBUG] Global token has been declared!")
@@ -121,30 +198,47 @@ function loginUser(){
 }
 
 $("#loginButton").click(function() {
-    loginUser();
+    let username = $('#usernameInput').val();
+    let password = $('#passwordInput').val();
+    loginUser(username, password);
 });
+
+/***
+ *    ██████╗LL██████╗LL██████╗L██╗LL██╗██████╗L██╗███████╗██████╗L██╗LLLLLL█████╗L██╗LLL██╗
+ *    ██╔══██╗██╔═══██╗██╔═══██╗██║L██╔╝██╔══██╗██║██╔════╝██╔══██╗██║LLLLL██╔══██╗╚██╗L██╔╝
+ *    ██████╔╝██║LLL██║██║LLL██║█████╔╝L██║LL██║██║███████╗██████╔╝██║LLLLL███████║L╚████╔╝L
+ *    ██╔══██╗██║LLL██║██║LLL██║██╔═██╗L██║LL██║██║╚════██║██╔═══╝L██║LLLLL██╔══██║LL╚██╔╝LL
+ *    ██████╔╝╚██████╔╝╚██████╔╝██║LL██╗██████╔╝██║███████║██║LLLLL███████╗██║LL██║LLL██║LLL
+ *    ╚═════╝LL╚═════╝LL╚═════╝L╚═╝LL╚═╝╚═════╝L╚═╝╚══════╝╚═╝LLLLL╚══════╝╚═╝LL╚═╝LLL╚═╝LLL
+ *    LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+ */
 
 function displayBooks(fetchedBooks){
     $("#bookContainer").empty();
+    var row = 0;
     for(var i=0; i<fetchedBooks.length; i++){
+        if((i) % 3 == 0){
+            row = Math.floor((i) / 3);
+            $('#bookContainer').append('<div class="row" id="bookRow' + row + '"></div>');
+        }
+
         let title = fetchedBooks[i].title;
         let author = fetchedBooks[i].author;
         let isbn = fetchedBooks[i].isbn;
         let cover = fetchedBooks[i].cover;
         let price = fetchedBooks[i].price;
         let bookString = makeBookCard(title, author, isbn, cover, price);
-        $('#bookContainer').append(bookString);
+        $('#bookRow' + row).append(bookString);
     };
 }
 
 function makeBookCard(title, author, isbn, cover, price){
     let bookCardString = `
-    <div class="row">
-        <div class="col s6 m7">
+    <div class="col s4 m4">
         <div class="card">
             <div class="card-image">
             <img src="${cover}">
-            <span class="card-title">${title}</span>
+            <span class="card-title"></span>
             </div>
             <div class="card-content">
             <p>This book was written by:<b>${author}</b></p>
@@ -155,14 +249,7 @@ function makeBookCard(title, author, isbn, cover, price){
             <a href="#">Rent this Book</a>
             </div>
         </div>
-        </div>
-    </div>`
+    </div>
+    `;
     return bookCardString;
 }
-
-/*<div class="dropdown-content">
-<p class="bookIsbn">ISBN: 4235263456</p>
-<p class="bookTitle">Learning Kali Linux</p>
-<p class="bookAuthor">written by: Ric Messier</p>
-<p class="bookPrice">3.6€ per day</p>
-</div>*/

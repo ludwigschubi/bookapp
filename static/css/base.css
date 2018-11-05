@@ -8,6 +8,10 @@ body {
     flex-direction: column;
 }
 
+h3 {
+    padding: 5%;
+}
+
 main {
     flex: 1 0 auto;
 }

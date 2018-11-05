@@ -15,47 +15,74 @@
                 <div class="nav-wrapper">
                     <a href='/' class="brand-logo">Logo</a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down" name="loginSpace">
-                        <li><input type="text" id="usernameInput" placeholder="Enter your username"></li>
+                        <!--<li><input type="text" id="usernameInput" placeholder="Enter your username"></li>
                         <li><input type="password" id="passwordInput" placeholder="Enter your password"></li>
-                        <li><a class="waves-effect waves-light btn" id="loginButton">Login<i class="material-icons right">account_circle</i></a></li>
+                        <li><a class="waves-effect waves-light btn" id="loginButton">Login<i class="material-icons right">account_circle</i></a></li>-->
                     </ul>
                 </div>
             </nav>
         </header>
         <main>
-            <div class="container">
+            <div class="container z-depth-4" id="loginForm">
                 <div class="row">
-                    <form class="col s12">
+                    <form class="col s4 offset-s1">
+                        <h5>Not signed up yet? Create an account:</h5>
                         <div class="row">
                             <div class="input-field col s6">
-                                <input type ="text" id="title">
-                                <label for="title">Title</label>
+                                <input type ="text" id="username">
+                                <label for="username">Username</label>
                             </div>
                             <div class="input-field col s6">
-                                <input type ="text" id="author">
-                                <label for="author">Author</label>
+                                    <input type ="password" id="password">
+                                    <label for="password">Password</label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field col s6">
-                                <input type ="text" id="isbn">
-                                <label for="isbn">ISBN</label>
+                                <input type ="text" id="firstName">
+                                <label for="firstName">First Name</label>
                             </div>
                             <div class="input-field col s6">
-                                <input type ="text" id="cover">
-                                <label for="cover">Cover</label>
+                                <input type ="text" id="lastName">
+                                <label for="lastName">Last Name</label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field col s12">
-                                <input type ="number" step="0.1" id="price">
-                                <label for="price">Price per day</label>
+                                <input type ="email" id="email">
+                                <label for="email">Email</label>
                             </div>
+                        </div>
+                        <div class="row">
+                            <a class="waves-effect waves-light btn" id="signupButton">Register<i class="material-icons right">add_circle</i></a>
+                        </div>
+                    </form>
+                    <form class="col s4 offset-s1">
+                        <h5>Signed up already? Log in:</h5>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input type="text" id="usernameInput">
+                                <label for="usernameInput">Username</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input type="password" id="passwordInput">
+                                <label for="passwordInput">Password</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <a class="waves-effect waves-light btn" id="loginButton">Login<i class="material-icons right">account_circle</i></a>
                         </div>
                     </form>
                 </div>
-                <button id="create-book">Create a new entry</button>
-                <div id="bookContainer"></div>
+            </div>
+            <div class="container z-depth-4" id="newBookContainer">
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div id="bookContainer"></div>
+                </div>
             </div>
         </main>
         <footer>
