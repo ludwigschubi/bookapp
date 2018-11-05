@@ -9,7 +9,7 @@ urlpatterns = [
     path('auth/register', register),
     path('auth/login', login),
     path('auth/logout', logout),
-    path('userAddress/show', userAddressList),
+    path('userAddress/show', userAddressShow),
     path('userAddress/create', userAddressCreate),
     path('userAddress/update', userAddressUpdate),
     path('book/list/', bookList),
