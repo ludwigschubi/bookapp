@@ -158,7 +158,7 @@ def bookShow(request, bookId):
 @csrf_exempt
 @api_view(["POST"])
 def bookCreate(request):
-    serialized = BookSerializer(data=request.data)
+    serialized = BookSerializer(data=request.data, context={'request': request})
     if serialized.is_valid():
         serialized.save()
         return Response({"success": "Successfully created"}, status=status.HTTP_201_CREATED)
@@ -174,7 +174,8 @@ def bookUpdate(request, bookId):
         return Response({"error": "No such object"}, status=status.HTTP_400_BAD_REQUEST)
     if not book.owner == request.user:
         return Response({"error": "Not owner of the book"}, status=status.HTTP_400_BAD_REQUEST)
-    serialized = BookSerializer(data=request.data)
+
+    serialized = BookSerializer(book, data=request.data, context={'request': request})
     if serialized.is_valid():
         serialized.save()
         return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
