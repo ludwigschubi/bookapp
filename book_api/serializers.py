@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from django.contrib.auth.models import User
 
-from book.models import UserAddress, Book, Rental
+from book.models import UserAddress, UserPaymentCreditCard, Book, Rental
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,6 +19,11 @@ class UserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAddress
         fields = ('user', 'sex', 'street', 'street_number', 'postal_code', 'city', 'country', 'telephone')
+
+class UserPaymentCreditCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPaymentCreditCard
+        fields = ('user', 'card_company', 'card_number', 'card_holder_name', 'expire_date_month', 'expire_date_year', 'cvv')
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
