@@ -24,6 +24,9 @@ class UserPaymentCreditCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPaymentCreditCard
         fields = ('user', 'card_company', 'card_number', 'card_holder_name', 'expire_date_month', 'expire_date_year', 'cvv')
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:

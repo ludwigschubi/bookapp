@@ -98,7 +98,7 @@ def userPaymentCreditCardShow(request):
         queryset = UserPaymentCreditCard.objects.get(user=request.user)
     except UserPaymentCreditCard.DoesNotExist:
         return Response({"error": "No such payment method"}, status=status.HTTP_400_BAD_REQUEST)
-    serializer = UserPaymentSerializer(queryset)
+    serializer = UserPaymentCreditCardSerializer(queryset)
     return Response(serializer.data)
 
 @csrf_exempt
@@ -107,7 +107,7 @@ def userPaymentCreditCardCreate(request):
     if UserPaymentCreditCard.objects.filter(user=request.user).exists():
         return Response({"error": "Payment method already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
-    serialized = UserPaymentCreditCardSerializer(data=request.data)
+    serialized = UserPaymentCreditCardSerializer(data=request.data, context={'request': request})
     if serialized.is_valid():
         serialized.save()
         return Response({"success": "Successfully created"}, status=status.HTTP_201_CREATED)
@@ -120,7 +120,7 @@ def userPaymentCreditCardUpdate(request):
     if not UserPaymentCreditCard.objects.filter(user=request.user).exists():
         return Response({"error": "Payment method does not exist"}, status=status.HTTP_400_BAD_REQUEST)
     
-    serialized = UserPaymentCreditCardSerializer(UserPaymentCreditCard.objects.get(user=request.user), data=request.data)
+    serialized = UserPaymentCreditCardSerializer(UserPaymentCreditCard.objects.get(user=request.user), data=request.data, context={'request': request})
     if serialized.is_valid():
         serialized.save()
         return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
