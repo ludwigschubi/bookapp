@@ -19,6 +19,9 @@ class UserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAddress
         fields = ('user', 'sex', 'street', 'street_number', 'postal_code', 'city', 'country', 'telephone')
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
 
 class UserPaymentCreditCardSerializer(serializers.ModelSerializer):
     class Meta:

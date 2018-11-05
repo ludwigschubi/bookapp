@@ -65,7 +65,7 @@ def userAddressCreate(request):
     if UserAddress.objects.filter(user=request.user).exists():
         return Response({"error": "Address already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
-    serialized = UserAddressSerializer(data=request.data)
+    serialized = UserAddressSerializer(data=request.data, context={'request': request})
     if serialized.is_valid():
         serialized.save()
         return Response({"success": "Successfully created"}, status=status.HTTP_201_CREATED)
@@ -78,8 +78,7 @@ def userAddressUpdate(request):
     if not UserAddress.objects.filter(user=request.user).exists():
         return Response({"error": "Address does not exist"}, status=status.HTTP_400_BAD_REQUEST)
     
-        serialized = UserAddressSerializer(UserAddress.objects.get(user=request.user), data=request.data)
-
+    serialized = UserAddressSerializer(UserAddress.objects.get(user=request.user), data=request.data, context={'request': request})
     if serialized.is_valid():
         serialized.save()
         return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
