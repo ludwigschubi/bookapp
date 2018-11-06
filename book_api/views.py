@@ -80,7 +80,7 @@ def userAddressUpdate(request):
     if not UserAddress.objects.filter(user=request.user).exists():
         return Response({"error": "Address does not exist"}, status=status.HTTP_400_BAD_REQUEST)
     
-        serialized = UserAddressSerializer(UserAddress.objects.get(user=request.user), data=request.data)
+    serialized = UserAddressSerializer(UserAddress.objects.get(user=request.user), data=request.data)
 
     if serialized.is_valid():
         serialized.save()

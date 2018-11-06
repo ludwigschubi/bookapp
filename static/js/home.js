@@ -1,9 +1,10 @@
 $('document').ready(function(){
+    $('.sidenav').sidenav();
     setInterval(() => {
         if(token != undefined){
             loadBooks(token);
             console.log("[DEBUG] token in main: " + token)
-            console.log("[DEBUG] global user is: " + user)
+            console.log("[DEBUG] global user is: " + JSON.stringify(user))
         }
     }, 10000)
 })
@@ -73,6 +74,7 @@ function loginUser(username, password){
     xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE){
             if(xhr.status === 200){
+                login = true;
                 $('#loginForm').remove();
                 $('#newBookContainer').append(newBookFormString);
                 token = xhr.response.token;
@@ -113,6 +115,7 @@ function showUser(){
     xhr.onreadystatechange = () => {
         if(xhr.readyState === XMLHttpRequest.DONE){
             if(xhr.status == 200){
+                console.log(user);
                 user = xhr.response;
             }
         }
@@ -122,6 +125,132 @@ function showUser(){
     xhr.setRequestHeader("Authorization", "Token " + token)
     xhr.send();
 }
+
+
+
+/***
+ *    L██████╗██╗LL██╗L█████╗L███╗LLL██╗L██████╗L███████╗██╗LLL██╗███████╗███████╗██████╗L██╗███╗LLL██╗███████╗L██████╗L
+ *    ██╔════╝██║LL██║██╔══██╗████╗LL██║██╔════╝L██╔════╝██║LLL██║██╔════╝██╔════╝██╔══██╗██║████╗LL██║██╔════╝██╔═══██╗
+ *    ██║LLLLL███████║███████║██╔██╗L██║██║LL███╗█████╗LL██║LLL██║███████╗█████╗LL██████╔╝██║██╔██╗L██║█████╗LL██║LLL██║
+ *    ██║LLLLL██╔══██║██╔══██║██║╚██╗██║██║LLL██║██╔══╝LL██║LLL██║╚════██║██╔══╝LL██╔══██╗██║██║╚██╗██║██╔══╝LL██║LLL██║
+ *    ╚██████╗██║LL██║██║LL██║██║L╚████║╚██████╔╝███████╗╚██████╔╝███████║███████╗██║LL██║██║██║L╚████║██║LLLLL╚██████╔╝
+ *    L╚═════╝╚═╝LL╚═╝╚═╝LL╚═╝╚═╝LL╚═══╝L╚═════╝L╚══════╝L╚═════╝L╚══════╝╚══════╝╚═╝LL╚═╝╚═╝╚═╝LL╚═══╝╚═╝LLLLLL╚═════╝L
+ *    LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+ */
+
+let changeUserInfoString = `
+<div class="row">
+<h3>Change your personal information:</h3>
+</div>
+<div class="divider"></div>
+<div class="row">
+<form class="col s10 offset-s1">
+    <div class="row">
+        <div class="input-field col s6">
+            <select class="browser-default" id="sex">
+                <option value="" disabled selected>Choose your sex</option>
+                <option value="1">Male</option>
+                <option value="2">Female</option>
+                <option value="3">Other</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s6">
+            <input type ="text" id="street">
+            <label for="street" id="streetLabel">Street</label>
+        </div>
+        <div class="input-field col s6">
+            <input type ="text" id="street_number">
+            <label for="street_number" id="street_numberLabel">Street Number</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s6">
+            <input type ="text" id="postal_code">
+            <label for="postal_code" id="postal_codeLabel">Postal Code</label>
+        </div>
+        <div class="input-field col s6">
+            <input type ="text" id="city">
+            <label for="city" id="cityLabel">City</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s6">
+            <select class="browser-default" id="country">
+                <option value="" disabled selected>Choose your country</option>
+                <option value="1">Germany</option>
+                <option value="2">Georgia</option>
+            </select>
+        </div>
+        <div class="input-field col s6">
+            <i class="material-icons prefix">phone</i>
+            <input type ="tel" id="telephone" pattern="[0-9]{12}">
+            <label for="telephone" id="telephoneLabel">Telephone</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <button class="waves-effect waves-light btn-small" id="changeUserInfoButton">Submit changes<i class="material-icons right">send</i></button>
+        </div>
+    </div>
+</form>
+</div>
+`
+
+$('#myAccount').click(function(){
+    if(login == true){
+        $('#changeUserContainer').append(changeUserInfoString);
+        $('#street').val(user.street);
+        $('#streetLabel').addClass('active');
+        $('#street_number').val(user.street_number);
+        $('#street_numberLabel').addClass('active');
+        $('#postal_code').val(user.postal_code);
+        $('#postal_codeLabel').addClass('active');
+        $('#city').val(user.city);
+        $('#cityLabel').addClass('active');
+        $('#telephone').val(user.telephone);
+        $('#telephoneLabel').addClass('active');
+    }
+
+    $('#changeUserInfoButton').click(function(){
+        changeUserInfo();
+        showUser();
+    });
+});
+
+function changeUserInfo(){
+
+    const userInfo = {
+        user: user.user,
+        sex: $('#sex').val(),
+        street: $("#street").val(),
+        street_number: $("#street_number").val(),
+        postal_code: $("#postal_code").val(),
+        city: $('#city').val(),
+        country: $('#country').val(),
+        telephone: $('#telephone').val(),
+    }
+
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:8000/api/userAddress/update/";
+
+    xhr.responseType = "json";
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE){
+            console.log("User Info has been updated!")
+            sex.destroy();
+            country.destroy();
+            $('#changeUserContainer').empty();
+        };
+    };
+
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("Authorization", "Token " + token)
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(userInfo));
+}
+
 
 /***
  *    ██████╗LL██████╗LL██████╗L██╗LL██╗L██████╗██████╗L███████╗L█████╗L████████╗██╗L██████╗L███╗LLL██╗
