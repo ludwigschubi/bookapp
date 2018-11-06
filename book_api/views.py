@@ -79,13 +79,8 @@ def userAddressCreate(request):
 def userAddressUpdate(request):
     if not UserAddress.objects.filter(user=request.user).exists():
         return Response({"error": "Address does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-    
-<<<<<<< HEAD
-    serialized = UserAddressSerializer(UserAddress.objects.get(user=request.user), data=request.data)
 
-=======
     serialized = UserAddressSerializer(UserAddress.objects.get(user=request.user), data=request.data, context={'request': request})
->>>>>>> a174ff159231d88d0ab2a55b7b63e967e9ea4176
     if serialized.is_valid():
         serialized.save()
         return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
