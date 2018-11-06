@@ -23,11 +23,28 @@ Required attributes: NONE
 
 * create/
 Allowed method: POST
-Required attributes: user, sex, street, street_number, postal_code, city, country, telephone
+Required attributes: sex, street, street_number, postal_code, city, country, telephone
 
 * update/
 Allowed method: PUT
-Required attributes: user, sex, street, street_number, postal_code, city, country, telephone
+Required attributes: sex, street, street_number, postal_code, city, country, telephone
+
+
+## User Payment -> /api/payment/
+
+### User Payment Credit Card -> /api/payment/creditCard/
+
+* show/
+Allowed method: GET
+Required attributes: NONE
+
+* create/
+Allowed method: POST
+Required attributes: card_company, card_number, card_holder_name, expire_date_month, expire_date_year, cvv
+
+* update/
+Allowed method: PUT
+Required attributes: card_company, card_number, card_holder_name, expire_date_month, expire_date_year, cvv
 
 
 ## Books -> /api/book/
@@ -46,11 +63,11 @@ Required attributes: bookId
 
 * create/
 Allowed method: POST
-Required attributes: isbn, title, author, cover, price, owner
+Required attributes: isbn, title, author, cover, price
 
 * update/
 Allowed method: PUT
-Required attributes: isbn, title, author, cover, price, owner
+Required attributes: isbn, title, author, cover, price
 
 * destroy/<bookId>/
 Allowed method: GET

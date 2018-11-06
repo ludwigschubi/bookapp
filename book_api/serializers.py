@@ -19,16 +19,25 @@ class UserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAddress
         fields = ('user', 'sex', 'street', 'street_number', 'postal_code', 'city', 'country', 'telephone')
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
 
 class UserPaymentCreditCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPaymentCreditCard
         fields = ('user', 'card_company', 'card_number', 'card_holder_name', 'expire_date_month', 'expire_date_year', 'cvv')
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ('id', 'isbn', 'title', 'author', 'cover', 'price', 'owner')
+    owner = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
 
 class RentalSerializer(serializers.ModelSerializer):
     class Meta:
