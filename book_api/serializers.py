@@ -1,8 +1,9 @@
 from rest_framework import serializers
 
 from django.contrib.auth.models import User
+from django.db.models import Q
 
-from book.models import UserAddress, UserPaymentCreditCard, Book, Rental
+from book.models import UserAddress, UserAddressCountries, UserPaymentCreditCard, Book, Rental
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,6 +24,11 @@ class UserAddressSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
 
+class UserAddressCountriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAddressCountries
+        fields = ('id', 'name', 'iso_code', 'isd_code')
+
 class UserPaymentCreditCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPaymentCreditCard
@@ -42,4 +48,32 @@ class BookSerializer(serializers.ModelSerializer):
 class RentalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rental
-        fields = ('renter', 'book', 'from_data', 'to_date')
+        fields = ('renter', 'book', 'from_date', 'to_date')
+    renter = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+class RentalShowSerializer(serializers.Serializer):
+    rental_from_date = serializers.DateField()
+    rental_to_date = serializers.DateField()
+    book_title = serializers.CharField()
+    book_author = serializers.CharField()
+    book_isbn = serializers.CharField()
+    book_cover = serializers.URLField()
+    book_price = serializers.FloatField()
+    owner_firstname = serializers.CharField()
+    owner_lastname = serializers.CharField()
+    owner_street = serializers.CharField()
+    owner_street_number = serializers.CharField()
+    owner_postal_code = serializers.IntegerField()
+    owner_city = serializers.CharField()
+    owner_telephone = serializers.CharField()
+    owner_email = serializers.EmailField()
+    renter_firstname = serializers.CharField()
+    renter_lastname = serializers.CharField()
+    renter_street = serializers.CharField()
+    renter_street_number = serializers.CharField()
+    renter_postal_code = serializers.IntegerField()
+    renter_city = serializers.CharField()
+    renter_telephone = serializers.CharField()
+    renter_email = serializers.EmailField()
