@@ -2,7 +2,7 @@ from django.urls import path, include
 from django.conf.urls import url
 
 from book_api.views import register, login, logout
-from book_api.views import userAddressShow, userAddressCreate, userAddressUpdate
+from book_api.views import userAddressShow, userAddressCreate, userAddressUpdate, userAddressCountriesList
 from book_api.views import bookList, bookListOwn, bookShow, bookCreate, bookUpdate, bookDestroy, bookSearch
 from book_api.views import userPaymentCreditCardShow, userPaymentCreditCardCreate, userPaymentCreditCardUpdate
 from book_api.views import rentalList, rentalShow, rentalCreate
@@ -14,6 +14,7 @@ urlpatterns = [
     path('userAddress/show/', userAddressShow),
     path('userAddress/create/', userAddressCreate),
     path('userAddress/update/', userAddressUpdate),
+    path('userAddress/countries/list/', userAddressCountriesList),
     path('book/list/', bookList),
     path('book/listOwn/', bookListOwn),
     path('book/show/<int:bookId>/', bookShow),
