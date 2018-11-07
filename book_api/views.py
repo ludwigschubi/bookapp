@@ -6,8 +6,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from django.db.models import Q
 
-from book_api.serializers import UserSerializer, UserAddressSerializer, UserPaymentCreditCardSerializer, BookSerializer, RentalSerializer
+from book_api.serializers import UserSerializer, UserAddressSerializer, UserPaymentCreditCardSerializer, BookSerializer, RentalSerializer, RentalShowSerializer
 from book.models import UserAddress, UserPaymentCreditCard, Book, Rental
 
 #
@@ -198,3 +199,82 @@ def bookDestroy(request, bookId):
 @api_view(["GET"])
 def bookSearch(request):
     return Response({"error": "Not implemented yet"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+#
+# rental operations
+#
+
+@csrf_exempt
+@api_view(["GET"])
+def rentalList(request):
+    rentals = Rental.objects.filter(renter=request.user)
+    serialized = RentalSerializer(rentals, many=True)
+    return Response(serialized.data)
+
+@csrf_exempt
+@api_view(["GET"])
+def rentalShow(request, rentalId):
+    try:
+        rental = Rental.objects.get(id=rentalId)
+    except Rental.DoesNotExist:
+        return Response({"error": "No such rental"}, status=status.HTTP_400_BAD_REQUEST)
+
+    book = Book.objects.get(id=rental.book_id)
+    owner = User.objects.get(id=Book.objects.get(id=rental.book_id).owner_id)
+    ownerAddress = UserAddress.objects.get(user_id=owner.id)
+    renter = User.objects.get(id=rental.renter_id)
+    renterAddress = UserAddress.objects.get(user_id=renter.id)
+
+    # check if user is either owner of the book or the renter
+    if not request.user == owner or request.user == renter:
+        return Response({"error": "Not renter or owner of rented book"}, status=status.HTTP_400_BAD_REQUEST)
+
+    serialized = RentalShowSerializer(data={
+        'rental_from_date': rental.from_date,
+        'rental_to_date': rental.to_date,
+        'book_title': book.title,
+        'book_author': book.author,
+        'book_isbn': book.isbn,
+        'book_cover': book.cover,
+        'book_price': book.price,
+        'owner_firstname': owner.first_name,
+        'owner_lastname': owner.last_name,
+        'owner_street': ownerAddress.street,
+        'owner_street_number': ownerAddress.street_number,
+        'owner_postal_code': ownerAddress.postal_code,
+        'owner_city': ownerAddress.city,
+        'owner_telephone': ownerAddress.telephone,
+        'owner_email': owner.email,
+        'renter_firstname': renter.first_name,
+        'renter_lastname': renter.last_name,
+        'renter_street': renterAddress.street,
+        'renter_street_number': renterAddress.street_number,
+        'renter_postal_code': renterAddress.postal_code,
+        'renter_city': renterAddress.city,
+        'renter_telephone': renterAddress.telephone,
+        'renter_email': renter.email
+        }
+    )
+    if serialized.is_valid():
+        return Response(serialized.data, status=status.HTTP_200_OK)
+    return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@csrf_exempt
+@api_view(["POST"])
+def rentalCreate(request):
+    try:
+        book = Book.objects.get(id=request.data['book'])
+    except Book.DoesNotExist:
+        return Response({'error': 'Book does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    if book.owner == request.user:
+        return Response({'error': 'Can not rent own book'}, status=status.HTTP_400_BAD_REQUEST)
+    if Rental.objects.filter(book_id=book.id).filter(Q(from_date__gte=request.data['from_date'], from_date__lt=request.data['to_date']) | Q(to_date__gt=request.data['from_date'], to_date__lte=request.data['to_date'])).exists():
+        return Response({'error': 'Book already rented for given date duration'}, status=status.HTTP_400_BAD_REQUEST)
+
+    serialized = RentalSerializer(data=request.data, context={'request': request})
+    if serialized.is_valid():
+        serialized.save()
+        return Response({"Success":"Successfully created"}, status=status.HTTP_201_CREATED)
+    return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
