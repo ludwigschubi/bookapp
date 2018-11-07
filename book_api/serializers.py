@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from book.models import UserAddress, UserPaymentCreditCard, Book, Rental
+from book.models import UserAddress, UserAddressCountries, UserPaymentCreditCard, Book, Rental
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,6 +23,11 @@ class UserAddressSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
+
+class UserAddressCountriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAddressCountries
+        fields = ('id', 'name', 'iso_code', 'isd_code')
 
 class UserPaymentCreditCardSerializer(serializers.ModelSerializer):
     class Meta:

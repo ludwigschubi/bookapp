@@ -8,8 +8,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.db.models import Q
 
-from book_api.serializers import UserSerializer, UserAddressSerializer, UserPaymentCreditCardSerializer, BookSerializer, RentalSerializer, RentalShowSerializer
-from book.models import UserAddress, UserPaymentCreditCard, Book, Rental
+from book_api.serializers import UserSerializer, UserAddressSerializer, UserAddressCountriesSerializer, UserPaymentCreditCardSerializer, BookSerializer, RentalSerializer, RentalShowSerializer
+from book.models import UserAddress, UserAddressCountries, UserPaymentCreditCard, Book, Rental
 
 #
 # user registration/login/logout operations
@@ -88,6 +88,12 @@ def userAddressUpdate(request):
     else:
         return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
 
+@csrf_exempt
+@api_view(["GET"])
+def userAddressCountriesList(request):
+    countries = UserAddressCountries.objects.all()
+    serialized = UserAddressCountriesSerializer(countries, many=True)
+    return Response(serialized.data)
 
 #
 # user payment methods
