@@ -5,6 +5,7 @@ from book_api.views import register, login, logout
 from book_api.views import userAddressShow, userAddressCreate, userAddressUpdate
 from book_api.views import bookList, bookListOwn, bookShow, bookCreate, bookUpdate, bookDestroy, bookSearch
 from book_api.views import userPaymentCreditCardShow, userPaymentCreditCardCreate, userPaymentCreditCardUpdate
+from book_api.views import rentalList, rentalShow, rentalCreate
 
 urlpatterns = [
     path('auth/register', register),
@@ -22,5 +23,8 @@ urlpatterns = [
     path('book/search', bookSearch),
     path('payment/creditCard/show', userPaymentCreditCardShow),
     path('payment/creditCard/create', userPaymentCreditCardCreate),
-    path('payment/creditCard/update', userPaymentCreditCardUpdate)
+    path('payment/creditCard/update', userPaymentCreditCardUpdate),
+    path('rental/list', rentalList),
+    path('rental/show/<int:rentalId>', rentalShow),
+    path('rental/create', rentalCreate)
 ]
