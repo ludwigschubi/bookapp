@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
@@ -80,12 +81,7 @@ def userAddressUpdate(request):
     if not UserAddress.objects.filter(user=request.user).exists():
         return Response({"error": "Address does not exist"}, status=status.HTTP_400_BAD_REQUEST)
     
-<<<<<<< HEAD
-    serialized = UserAddressSerializer(UserAddress.objects.get(user=request.user), data=request.data)
-
-=======
     serialized = UserAddressSerializer(UserAddress.objects.get(user=request.user), data=request.data, context={'request': request})
->>>>>>> a174ff159231d88d0ab2a55b7b63e967e9ea4176
     if serialized.is_valid():
         serialized.save()
         return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
@@ -202,6 +198,12 @@ def bookDestroy(request, bookId):
     return Response({"success": "Successfully deleted"}, status=status.HTTP_200_OK)
 
 @csrf_exempt
-@api_view(["GET"])
+@api_view(["POST"])
 def bookSearch(request):
-    return Response({"error": "Not implemented yet"}, status=status.HTTP_400_BAD_REQUEST)
+    vector = SearchVector('title', 'author', 'isbn')
+    query = SearchQuery(request.data['query'])
+    books = Book.objects.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+    serialized = BookSerializer(books, many=True)
+    return Response(serialized.data)
+
+    #return Response({"error": "Not implemented yet"}, status=status.HTTP_400_BAD_REQUEST)

@@ -1,7 +1,7 @@
 $('document').ready(function(){
     $('.sidenav').sidenav();
     setInterval(() => {
-        if(token != undefined){
+        if(token != undefined && loadBooksBool == true){
             loadBooks(token);
             console.log("[DEBUG] token in main: " + token)
             console.log("[DEBUG] global user is: " + JSON.stringify(user))
@@ -68,7 +68,7 @@ function loginUser(username, password){
     };
 
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:8000/api/auth/login/";
+    var url = "http://localhost:8000/api/auth/login";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
@@ -76,9 +76,11 @@ function loginUser(username, password){
             if(xhr.status === 200){
                 login = true;
                 $('#loginForm').remove();
-                $('#newBookContainer').append(newBookFormString);
                 token = xhr.response.token;
                 showUser(token);
+                initializeSearch();
+                loadBooks();
+                loadBooksBool = true;
                 console.log("[DEBUG] Global token has been declared!")
             } else {
                 $("input[name='loginSpace']").append("<li id='loginError'><p>Invalid Login Credentials!</p></li>")
@@ -109,7 +111,7 @@ $("#loginButton").click(function() {
 
 function showUser(){
     var xhr = new XMLHttpRequest();
-    var apiEndpoint = "http://localhost:8000/api/userAddress/show/";
+    var apiEndpoint = "http://localhost:8000/api/userAddress/show";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
@@ -191,7 +193,7 @@ let changeUserInfoString = `
     </div>
     <div class="row">
         <div class="col s12">
-            <button class="waves-effect waves-light btn-small" id="changeUserInfoButton">Submit changes<i class="material-icons right">send</i></button>
+            <a class="waves-effect waves-light btn-small" id="changeUserInfoButton">Submit changes<i class="material-icons right">send</i></a>
         </div>
     </div>
 </form>
@@ -201,6 +203,8 @@ let changeUserInfoString = `
 $('#myAccount').click(function(){
     if(login == true){
         $('#changeUserContainer').append(changeUserInfoString);
+        $('#changeUserContainer').addClass('z-depth-4')
+
         $('#street').val(user.street);
         $('#streetLabel').addClass('active');
         $('#street_number').val(user.street_number);
@@ -212,6 +216,11 @@ $('#myAccount').click(function(){
         $('#telephone').val(user.telephone);
         $('#telephoneLabel').addClass('active');
     }
+    loadBooksBool = false;
+    $('#bookContainer').empty();
+    $('#newBookContainer').empty();
+    $('#addBookButton').removeClass('disabled');
+    $('#myAccount').addClass('disabled');
 
     $('#changeUserInfoButton').click(function(){
         changeUserInfo();
@@ -233,15 +242,16 @@ function changeUserInfo(){
     }
 
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:8000/api/userAddress/update/";
+    var url = "http://localhost:8000/api/userAddress/update";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE){
-            console.log("User Info has been updated!")
-            sex.destroy();
-            country.destroy();
-            $('#changeUserContainer').empty();
+            if(xhr.status == 200){
+                console.log("User Info has been updated!")
+                $('#changeUserContainer').empty();
+                loadBooksBool = true;
+            }
         };
     };
 
@@ -251,6 +261,55 @@ function changeUserInfo(){
     xhr.send(JSON.stringify(userInfo));
 }
 
+/***
+ *    ██████╗LL██████╗LL██████╗L██╗LL██╗███████╗███████╗L█████╗L██████╗LL██████╗██╗LL██╗
+ *    ██╔══██╗██╔═══██╗██╔═══██╗██║L██╔╝██╔════╝██╔════╝██╔══██╗██╔══██╗██╔════╝██║LL██║
+ *    ██████╔╝██║LLL██║██║LLL██║█████╔╝L███████╗█████╗LL███████║██████╔╝██║LLLLL███████║
+ *    ██╔══██╗██║LLL██║██║LLL██║██╔═██╗L╚════██║██╔══╝LL██╔══██║██╔══██╗██║LLLLL██╔══██║
+ *    ██████╔╝╚██████╔╝╚██████╔╝██║LL██╗███████║███████╗██║LL██║██║LL██║╚██████╗██║LL██║
+ *    ╚═════╝LL╚═════╝LL╚═════╝L╚═╝LL╚═╝╚══════╝╚══════╝╚═╝LL╚═╝╚═╝LL╚═╝L╚═════╝╚═╝LL╚═╝
+ *    LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+ */
+
+function initializeSearch(){
+    let searchBooksString = `
+    <div class="input-field" style="margin: 3rem;">
+        <input type="text" id="search" placeholder="Search for your favourite book!">
+    </div>
+    `
+
+    $('#searchBarContainer').append(searchBooksString)
+    $('#searchBarContainer').addClass('z-depth-1')
+
+    $('#search').on('input', function(){
+        searchBooks($('#search').val())
+    });
+}
+
+function searchBooks(query){
+    const queryInfo = {
+        query: query
+    }
+
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:8000/api/book/search";
+
+    xhr.responseType = "json";
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE){
+            if(xhr.status == 200){
+                loadBooksBool = false;
+                $('bookContainer').empty();
+                displayBooks(xhr.response);
+            }
+        };
+    };
+
+    xhr.open("POST", url);
+    xhr.setRequestHeader("Authorization", "Token " + token)
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(queryInfo));
+}
 
 /***
  *    ██████╗LL██████╗LL██████╗L██╗LL██╗L██████╗██████╗L███████╗L█████╗L████████╗██╗L██████╗L███╗LLL██╗
@@ -261,6 +320,17 @@ function changeUserInfo(){
  *    ╚═════╝LL╚═════╝LL╚═════╝L╚═╝LL╚═╝L╚═════╝╚═╝LL╚═╝╚══════╝╚═╝LL╚═╝LLL╚═╝LLL╚═╝L╚═════╝L╚═╝LL╚═══╝
  *    LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
  */
+
+$('#addBook').click(function(){
+    if(login == true){
+        loadBooksBool = false;
+        wipePage();
+        $('#addBookButton').addClass('disabled');
+        $('#myAccount').removeClass('disabled');
+        $('#newBookContainer').append(newBookFormString)
+        $('#newBookContainer').addClass('z-depth-4')
+    }
+})
 
 let newBookFormString = `
 <div class="row">
@@ -319,7 +389,7 @@ function createBook(ownerId){
     }
 
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:8000/api/book/create/";
+    var url = "http://localhost:8000/api/book/create";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
@@ -346,7 +416,7 @@ function createBook(ownerId){
 
 function loadBooks(){
     var xhr = new XMLHttpRequest();
-    var apiEndpoint = "http://localhost:8000/api/book/list/";
+    var apiEndpoint = "http://localhost:8000/api/book/list";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
@@ -363,36 +433,37 @@ function loadBooks(){
 }
 
 function displayBooks(fetchedBooks){
-    $("#bookContainer").empty();
+    $('#bookContainer').empty()
+
     var row = 0;
-    for(var i=0; i<fetchedBooks.length; i++){
-        if((i) % 3 == 0){
-            row = Math.floor((i) / 3);
+    for(var count=0; count<fetchedBooks.length; count++){
+        //Decide wether to make a new row
+        if((count) % 3 == 0){
+            row = Math.floor((count) / 3);
             $('#bookContainer').append('<div class="row" id="bookRow' + row + '"></div>');
         }
 
-        let title = fetchedBooks[i].title;
-        let author = fetchedBooks[i].author;
+        /*let author = fetchedBooks[i].author;
         let isbn = fetchedBooks[i].isbn;
         let cover = fetchedBooks[i].cover;
-        let price = fetchedBooks[i].price;
-        let bookString = makeBookCard(title, author, isbn, cover, price);
+        let price = fetchedBooks[i].price;*/
+        let bookString = makeBookCard(fetchedBooks[count]);
         $('#bookRow' + row).append(bookString);
     };
 }
 
-function makeBookCard(title, author, isbn, cover, price){
+function makeBookCard(book){
     let bookCardString = `
     <div class="col s4 m4">
         <div class="card">
             <div class="card-image">
-            <img src="${cover}">
+            <img src="${book.cover}">
             <span class="card-title"></span>
             </div>
             <div class="card-content">
-            <p>This book was written by:<b>${author}</b></p>
-            <p>ISBN: <b>${isbn}</b></p>
-            <b>${price}</b>
+            <p>This book was written by:<b>${book.author}</b></p>
+            <p>ISBN: <b>${book.isbn}</b></p>
+            <b>${book.price}</b>
             </div>
             <div class="card-action">
             <a href="#">Rent this Book</a>
@@ -401,4 +472,31 @@ function makeBookCard(title, author, isbn, cover, price){
     </div>
     `;
     return bookCardString;
+}
+
+/***
+ *    ██████╗L██╗LLL██╗███╗LLL██╗L█████╗L███╗LLL███╗██╗L██████╗██████╗LLLLLLL████████╗L██████╗██╗LL██╗
+ *    ██╔══██╗╚██╗L██╔╝████╗LL██║██╔══██╗████╗L████║██║██╔════╝██╔══██╗▄L██╗▄╚══██╔══╝██╔════╝██║LL██║
+ *    ██║LL██║L╚████╔╝L██╔██╗L██║███████║██╔████╔██║██║██║LLLLL██████╔╝L████╗LLL██║LLL██║LLLLL███████║
+ *    ██║LL██║LL╚██╔╝LL██║╚██╗██║██╔══██║██║╚██╔╝██║██║██║LLLLL██╔══██╗▀╚██╔▀LLL██║LLL██║LLLLL██╔══██║
+ *    ██████╔╝LLL██║LLL██║L╚████║██║LL██║██║L╚═╝L██║██║╚██████╗██████╔╝LL╚═╝LLLL██║LLL╚██████╗██║LL██║
+ *    ╚═════╝LLLL╚═╝LLL╚═╝LL╚═══╝╚═╝LL╚═╝╚═╝LLLLL╚═╝╚═╝L╚═════╝╚═════╝LLLLLLLLLL╚═╝LLLL╚═════╝╚═╝LL╚═╝
+ *    LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+ */
+
+$('#feedButton').click(function(){
+    wipePage();
+    initializeSearch();
+    loadBooks();
+    loadBooksBool = true;
+})
+
+function wipePage(){
+    $('#bookContainer').empty();
+    $('#newBookContainer').empty();
+    $('#newBookContainer').removeClass('z-depth-4')
+    $('#changeUserContainer').empty();
+    $('#changeUserContainer').addClass('z-depth-4')
+    $('#searchBarContainer').empty();
+    $('#searchBarContainer').addClass('z-depth-1')
 }

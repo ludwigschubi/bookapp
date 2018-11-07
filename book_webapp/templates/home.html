@@ -13,9 +13,10 @@
         <header>
             <nav>
                 <div class="nav-wrapper">
-                    <a href='/' class="brand-logo center">Logo</a>
+                    <a id="feedButton" class="brand-logo center">Logo</a>
                     <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
+                        <li><a class="waves-effect btn-flat" id="addBook">Add Book</a></li>
                         <li><a class="waves-effect btn-flat" id="myAccount"><i class="large material-icons">account_circle</i></a></li>
                     </ul>
                 </div>
@@ -25,7 +26,7 @@
             </ul>
         </header>
         <main>
-            <div class="container z-depth-4" id="changeUserContainer">
+            <div class="container" id="changeUserContainer">
             </div>
             <div class="container z-depth-4" id="loginForm">
                 <div class="row">
@@ -81,13 +82,9 @@
                     </form>
                 </div>
             </div>
-            <div class="container z-depth-4" id="newBookContainer">
-            </div>
-            <div class="container">
-                <div class="row">
-                    <div id="bookContainer"></div>
-                </div>
-            </div>
+            <div class="container" id="newBookContainer"></div>
+            <div class="container z-depth-1" id="searchBarContainer"></div>
+            <div class="container" id="bookContainer"></div>
         </main>
         <footer>
             <div class="container">
@@ -118,6 +115,7 @@
             var token = "";
             var user = {};
             var login = false;
+            var loadBooksBool = true;
         </script>
     </body>
 {% endblock %}
