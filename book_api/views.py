@@ -81,11 +81,6 @@ def userAddressCreate(request):
 def userAddressUpdate(request):
     if not UserAddress.objects.filter(user=request.user).exists():
         return Response({"error": "Address does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 5a2fa587ab0b1f516aec845ca76c8fbb78047686
     serialized = UserAddressSerializer(UserAddress.objects.get(user=request.user), data=request.data, context={'request': request})
     if serialized.is_valid():
         serialized.save()
@@ -211,16 +206,13 @@ def bookDestroy(request, bookId):
 @csrf_exempt
 @api_view(["POST"])
 def bookSearch(request):
-<<<<<<< HEAD
     vector = SearchVector('title', 'author', 'isbn')
     query = SearchQuery(request.data['query'])
     books = Book.objects.annotate(rank=SearchRank(vector, query)).order_by('-rank')
     serialized = BookSerializer(books, many=True)
     return Response(serialized.data)
-
     #return Response({"error": "Not implemented yet"}, status=status.HTTP_400_BAD_REQUEST)
-=======
-    return Response({"error": "Not implemented yet"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 #
@@ -300,4 +292,3 @@ def rentalCreate(request):
         serialized.save()
         return Response({"Success":"Successfully created"}, status=status.HTTP_201_CREATED)
     return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
->>>>>>> 5a2fa587ab0b1f516aec845ca76c8fbb78047686
