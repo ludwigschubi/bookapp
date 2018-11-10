@@ -76,3 +76,22 @@ Required attributes: bookId
 * search/               # NOT IMPLEMENTED #
 Allowed method: GET
 Required attributes:
+
+
+## Rental -> /api/rental/
+
+* list/
+Allowed method: GET
+Required attributes: NONE
+Description: Returns rental list of authenticated user
+
+* show/<rentalId>/
+Allowed method: GET
+Required attributes: rentalId
+Description: Returns details of requested rental entry
+
+* create/
+Allowed method: POST
+Required attributes: book, from_date, to_date
+Description: Creates rental of requested book
+Example (json): {"book": 2, "from_date": "2019-01-01", "to_date": "2019-01-15"}
