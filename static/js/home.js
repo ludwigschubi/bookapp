@@ -118,8 +118,8 @@ function showUser(){
     xhr.onreadystatechange = () => {
         if(xhr.readyState === XMLHttpRequest.DONE){
             if(xhr.status == 200){
-                console.log(user);
                 user = xhr.response;
+                console.log(user);
             }
         }
     };
@@ -203,6 +203,7 @@ let changeUserInfoString = `
 
 $('#myAccount').click(function(){
     if(login == true){
+        showUser()
         $('#changeUserContainer').append(changeUserInfoString);
         $('#changeUserContainer').addClass('z-depth-4')
 
@@ -227,7 +228,6 @@ $('#myAccount').click(function(){
 
     $('#changeUserInfoButton').click(function(){
         changeUserInfo();
-        showUser();
     });
 });
 
