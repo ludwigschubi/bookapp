@@ -47,7 +47,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'book.urls'
-APPEND_SLASH = True
+#APPEND_SLASH = True
 
 TEMPLATES = [
     {

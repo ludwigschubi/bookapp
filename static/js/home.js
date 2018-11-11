@@ -6,7 +6,7 @@ $('document').ready(function(){
             console.log("[DEBUG] token in main: " + token)
             console.log("[DEBUG] global user is: " + JSON.stringify(user))
         }
-    }, 10000)
+    }, 100000)
 })
 
 /***
@@ -68,7 +68,7 @@ function loginUser(username, password){
     };
 
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:8000/api/auth/login";
+    var url = "http://localhost:8000/api/auth/login/";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
@@ -82,6 +82,7 @@ function loginUser(username, password){
                 loadBooks();
                 loadBooksBool = true;
                 console.log("[DEBUG] Global token has been declared!")
+                listRentals()
             } else {
                 $("input[name='loginSpace']").append("<li id='loginError'><p>Invalid Login Credentials!</p></li>")
             }  
@@ -111,7 +112,7 @@ $("#loginButton").click(function() {
 
 function showUser(){
     var xhr = new XMLHttpRequest();
-    var apiEndpoint = "http://localhost:8000/api/userAddress/show";
+    var apiEndpoint = "http://localhost:8000/api/userAddress/show/";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
@@ -215,10 +216,12 @@ $('#myAccount').click(function(){
         $('#cityLabel').addClass('active');
         $('#telephone').val(user.telephone);
         $('#telephoneLabel').addClass('active');
+        loadRentalList()
     }
     loadBooksBool = false;
     $('#bookContainer').empty();
     $('#newBookContainer').empty();
+    $('#searchBarContainer').empty();
     $('#addBookButton').removeClass('disabled');
     $('#myAccount').addClass('disabled');
 
@@ -242,7 +245,7 @@ function changeUserInfo(){
     }
 
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:8000/api/userAddress/update";
+    var url = "http://localhost:8000/api/userAddress/update/";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
@@ -292,7 +295,7 @@ function searchBooks(query){
     }
 
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:8000/api/book/search";
+    var url = "http://localhost:8000/api/book/search/";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
@@ -389,7 +392,7 @@ function createBook(ownerId){
     }
 
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:8000/api/book/create";
+    var url = "http://localhost:8000/api/book/create/";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
@@ -416,7 +419,7 @@ function createBook(ownerId){
 
 function loadBooks(){
     var xhr = new XMLHttpRequest();
-    var apiEndpoint = "http://localhost:8000/api/book/list";
+    var apiEndpoint = "http://localhost:8000/api/book/list/";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
@@ -448,6 +451,35 @@ function displayBooks(fetchedBooks){
         let cover = fetchedBooks[i].cover;
         let price = fetchedBooks[i].price;*/
         let bookString = makeBookCard(fetchedBooks[count]);
+        if(count == fetchedBooks.length - 1){
+            bookString += `
+            <script>
+                function sendBookRental(id){
+                    const rentalData = {
+                        book: id,
+                        from_date: $("#dateFrom" + id).val(),
+                        to_date: $("#dateTo" + id).val(),
+                    }
+                
+                    var xhr = new XMLHttpRequest();
+                    var url = "http://localhost:8000/api/rental/create/";
+                
+                    xhr.responseType = "json";
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === XMLHttpRequest.DONE){
+                            //showRentals()  
+                            console.log('new rental registered!')
+                        };
+                    };
+                
+                    xhr.open("POST", url);
+                    xhr.setRequestHeader("Authorization", "Token " + token)
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                    xhr.send(JSON.stringify(rentalData));
+                }
+            </script>
+            `
+        }
         $('#bookRow' + row).append(bookString);
     };
 }
@@ -466,12 +498,67 @@ function makeBookCard(book){
             <b>${book.price}</b>
             </div>
             <div class="card-action">
-            <a href="#">Rent this Book</a>
+            <p>From: <input type="date" min="2018-10-31" id="dateFrom${book.id}"</p>
+            <p>To: <input type="date" min="2018-10-31" id="dateTo${book.id}"</p>
+            <a class="waves-effect waves-light btn-small" onclick="sendBookRental(${book.id})" id="book${book.id}">Rent this book</a>
             </div>
         </div>
     </div>
     `;
     return bookCardString;
+}
+
+/***
+ *    ██████╗L███████╗███╗LLL██╗████████╗L█████╗L██╗LLLLL██████╗L██╗███████╗██████╗L██╗LLLLLL█████╗L██╗LLL██╗
+ *    ██╔══██╗██╔════╝████╗LL██║╚══██╔══╝██╔══██╗██║LLLLL██╔══██╗██║██╔════╝██╔══██╗██║LLLLL██╔══██╗╚██╗L██╔╝
+ *    ██████╔╝█████╗LL██╔██╗L██║LLL██║LLL███████║██║LLLLL██║LL██║██║███████╗██████╔╝██║LLLLL███████║L╚████╔╝L
+ *    ██╔══██╗██╔══╝LL██║╚██╗██║LLL██║LLL██╔══██║██║LLLLL██║LL██║██║╚════██║██╔═══╝L██║LLLLL██╔══██║LL╚██╔╝LL
+ *    ██║LL██║███████╗██║L╚████║LLL██║LLL██║LL██║███████╗██████╔╝██║███████║██║LLLLL███████╗██║LL██║LLL██║LLL
+ *    ╚═╝LL╚═╝╚══════╝╚═╝LL╚═══╝LLL╚═╝LLL╚═╝LL╚═╝╚══════╝╚═════╝L╚═╝╚══════╝╚═╝LLLLL╚══════╝╚═╝LL╚═╝LLL╚═╝LLL
+ *    LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+ */
+
+function displayRentals(fetchedRentals){
+    $('#rentalContainer').empty()
+    $('#rentalContainer').addClass('z-depth-4')
+
+    var rentalListString = `
+        <div class="row">
+            <h3>See your rentals</h3>
+        </div>
+        <div class="divider"></div>
+        <div class="row" id="rentalList">
+        </div>
+    `
+    $('#rentalContainer').append(rentalListString)
+
+    for(var i = 0; i < fetchedRentals.length; i++){
+        var rentalString = `
+            <div class="row col s10">
+                <p>Book-ID:${fetchedRentals[i]['book']}</p>
+                <p>From: ${fetchedRentals[i]['from_date']}</p>
+                <p>To: ${fetchedRentals[i]['to_date']}</p>
+            </div>
+        `
+        $('#rentalList').append(rentalString)
+    }
+}
+
+function loadRentalList(){
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:8000/api/rental/list/";
+
+    xhr.responseType = "json";
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE){
+            console.log(xhr.response)
+            displayRentals(xhr.response)
+        };
+    };
+
+    xhr.open("GET", url);
+    xhr.setRequestHeader("Authorization", "Token " + token)
+    xhr.send();
 }
 
 /***
@@ -489,6 +576,7 @@ $('#feedButton').click(function(){
     initializeSearch();
     loadBooks();
     loadBooksBool = true;
+    $('#myAccount').removeClass('disabled');
 })
 
 function wipePage(){
@@ -499,4 +587,6 @@ function wipePage(){
     $('#changeUserContainer').addClass('z-depth-4')
     $('#searchBarContainer').empty();
     $('#searchBarContainer').addClass('z-depth-1')
+    $('#rentalContainer').empty();
+    $('#rentalContainer').removeClass('z-depth-4')
 }
