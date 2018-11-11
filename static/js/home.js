@@ -1,5 +1,6 @@
 $('document').ready(function(){
     $('.sidenav').sidenav();
+    M.AutoInit();
     setInterval(() => {
         if(token != undefined && loadBooksBool == true){
             loadBooks(token);
@@ -362,49 +363,48 @@ let newBookFormString = `
             </div>
         </div>
         <div class="row">
-            <div class="input-field col s12">
+            <div class="input-field col s6">
                 <input type ="number" step="0.1" id="price">
                 <label for="price">Price per day</label>
             </div>
+            <div class="input-field col s6">
+                <a class="waves-effect waves-light btn" id="createBook">Create a new Entry</a>
+            </div>
+            <script>
+                $('#createBook').click(function(){
+                    const bookData = {
+                        isbn: $("#isbn").val(),
+                        title: $("#title").val(),
+                        author: $("#author").val(),
+                        cover: $("#cover").val(),
+                        price: $("#price").val(),
+                        owner: user.user,
+                    }
+                
+                    var xhr = new XMLHttpRequest();
+                    var url = "http://localhost:8000/api/book/create/";
+                
+                    xhr.responseType = "json";
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === XMLHttpRequest.DONE){
+                            M.toast({html: 'Book has been created!'})
+                        };
+                    };
+                
+                    xhr.open("POST", url);
+                    xhr.setRequestHeader("Authorization", "Token " + token)
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                    xhr.send(JSON.stringify(bookData));
+                })
+            </script>
         </div>
     </form>
 </div>
 `
 
-$("#create-book").click(function() {
-    createBook(user.user)
-    loadBooks();
-});
-
 /** create/
 Allowed method: POST
 Required attributes: isbn, title, author, cover, price, owner*/
-
-function createBook(ownerId){
-    const bookData = {
-        isbn: $("#isbn").val(),
-        title: $("#title").val(),
-        author: $("#author").val(),
-        cover: $("#cover").val(),
-        price: $("#price").val(),
-        owner: ownerId,
-    }
-
-    var xhr = new XMLHttpRequest();
-    var url = "http://localhost:8000/api/book/create/";
-
-    xhr.responseType = "json";
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE){
-          console.log("Book has been created!")  
-        };
-    };
-
-    xhr.open("POST", url);
-    xhr.setRequestHeader("Authorization", "Token " + token)
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(JSON.stringify(bookData));
-}
 
 /***
  *    ██████╗LL██████╗LL██████╗L██╗LL██╗██████╗L██╗███████╗██████╗L██╗LLLLLL█████╗L██╗LLL██╗
