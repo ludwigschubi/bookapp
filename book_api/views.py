@@ -8,8 +8,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.db.models import Q
+from django.forms.models import model_to_dict
 
-from book_api.serializers import UserSerializer, UserAddressSerializer, UserAddressCountriesSerializer, UserPaymentCreditCardSerializer, BookSerializer, RentalSerializer, RentalShowSerializer
+from book_api.serializers import UserSerializer
+from book_api.serializers import UserAddressSerializer, UserAddressCountriesSerializer
+from book_api.serializers import UserPaymentCreditCardSerializer, BookSerializer, RentalSerializer, RentalShowSerializer
 from book.models import UserAddress, UserAddressCountries, UserPaymentCreditCard, Book, Rental
 
 #
@@ -244,36 +247,12 @@ def rentalShow(request, rentalId):
     if not request.user == owner or request.user == renter:
         return Response({"error": "Not renter or owner of rented book"}, status=status.HTTP_400_BAD_REQUEST)
 
-    serialized = RentalShowSerializer(data={
-        'rental_from_date': rental.from_date,
-        'rental_to_date': rental.to_date,
-        'book_title': book.title,
-        'book_author': book.author,
-        'book_isbn': book.isbn,
-        'book_cover': book.cover,
-        'book_price': book.price,
-        'owner_firstname': owner.first_name,
-        'owner_lastname': owner.last_name,
-        'owner_street': ownerAddress.street,
-        'owner_street_number': ownerAddress.street_number,
-        'owner_postal_code': ownerAddress.postal_code,
-        'owner_city': ownerAddress.city,
-        'owner_telephone': ownerAddress.telephone,
-        'owner_email': owner.email,
-        'renter_firstname': renter.first_name,
-        'renter_lastname': renter.last_name,
-        'renter_street': renterAddress.street,
-        'renter_street_number': renterAddress.street_number,
-        'renter_postal_code': renterAddress.postal_code,
-        'renter_city': renterAddress.city,
-        'renter_telephone': renterAddress.telephone,
-        'renter_email': renter.email
-        }
-    )
+    serialized = RentalShowSerializer(data={'from_date': rental.from_date,'to_date': rental.to_date,'book': book.__dict__, 'owner': owner.__dict__, 'ownerAddress': model_to_dict(ownerAddress), 'renter': renter.__dict__, 'renterAddress': model_to_dict(renterAddress)}, context={'request': request})
+
     if serialized.is_valid():
         return Response(serialized.data, status=status.HTTP_200_OK)
-    return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
-
+    else:
+        return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
 
 @csrf_exempt
 @api_view(["POST"])

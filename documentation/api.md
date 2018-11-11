@@ -88,7 +88,7 @@ Description: Returns rental list of authenticated user
 * show/<rentalId>/
 Allowed method: GET
 Required attributes: rentalId
-Description: Returns details of requested rental entry
+Description: Returns details of requested rental entry, including the owner, renter and book details
 
 * create/
 Allowed method: POST

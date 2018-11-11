@@ -53,27 +53,40 @@ class RentalSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
 
+#
+# rental
+#
+
+class RentalShowBookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ('isbn', 'title', 'author', 'cover', 'price')
+
+class RentalShowOwnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+class RentalShowOwnerAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAddress
+        fields = ('sex', 'street', 'street_number', 'postal_code', 'city', 'country', 'telephone')
+
+class RentalShowRenterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+class RentalShowRenterAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAddress
+        fields = ('sex', 'street', 'street_number', 'postal_code', 'city', 'country', 'telephone')
+
 class RentalShowSerializer(serializers.Serializer):
-    rental_from_date = serializers.DateField()
-    rental_to_date = serializers.DateField()
-    book_title = serializers.CharField()
-    book_author = serializers.CharField()
-    book_isbn = serializers.CharField()
-    book_cover = serializers.URLField()
-    book_price = serializers.FloatField()
-    owner_firstname = serializers.CharField()
-    owner_lastname = serializers.CharField()
-    owner_street = serializers.CharField()
-    owner_street_number = serializers.CharField()
-    owner_postal_code = serializers.IntegerField()
-    owner_city = serializers.CharField()
-    owner_telephone = serializers.CharField()
-    owner_email = serializers.EmailField()
-    renter_firstname = serializers.CharField()
-    renter_lastname = serializers.CharField()
-    renter_street = serializers.CharField()
-    renter_street_number = serializers.CharField()
-    renter_postal_code = serializers.IntegerField()
-    renter_city = serializers.CharField()
-    renter_telephone = serializers.CharField()
-    renter_email = serializers.EmailField()
+    from_date = serializers.DateField()
+    to_date = serializers.DateField()
+    book = RentalShowBookSerializer()
+    owner = RentalShowOwnerSerializer()
+    ownerAddress = RentalShowOwnerAddressSerializer()
+    renter = RentalShowRenterSerializer()
+    renterAddress = RentalShowRenterAddressSerializer()
