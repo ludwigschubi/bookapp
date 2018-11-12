@@ -228,11 +228,11 @@ $('#myAccount').click(function(){
 
     $('#changeUserInfoButton').click(function(){
         changeUserInfo();
+        M.toast({html: 'Your info has been changed!'})
     });
 });
 
 function changeUserInfo(){
-
     const userInfo = {
         user: user.user,
         sex: $('#sex').val(),
@@ -252,7 +252,20 @@ function changeUserInfo(){
         if (xhr.readyState === XMLHttpRequest.DONE){
             if(xhr.status == 200){
                 console.log("User Info has been updated!")
-                $('#changeUserContainer').empty();
+                showUser()
+                $('#changeUserContainer').empty()
+                $('#changeUserContainer').append(changeUserInfoString);
+                $('#changeUserContainer').addClass('z-depth-4')
+                $('#street').val(user.street);
+                $('#streetLabel').addClass('active');
+                $('#street_number').val(user.street_number);
+                $('#street_numberLabel').addClass('active');
+                $('#postal_code').val(user.postal_code);
+                $('#postal_codeLabel').addClass('active');
+                $('#city').val(user.city);
+                $('#cityLabel').addClass('active');
+                $('#telephone').val(user.telephone);
+                $('#telephoneLabel').addClass('active');
                 loadBooksBool = true;
             }
         };
