@@ -11,9 +11,8 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 
 from book_api.serializers import UserSerializer
-from book_api.serializers import UserAddressSerializer, UserAddressCountriesSerializer
-from book_api.serializers import UserPaymentCreditCardSerializer, BookSerializer, RentalSerializer, RentalShowSerializer
-from book.models import UserAddress, UserAddressCountries, UserPaymentCreditCard, Book, Rental
+from book_api.serializers import BookSerializer, RentalSerializer, RentalShowSerializer
+from book.models import Book, Rental
 
 #
 # user registration/login/logout operations
@@ -50,94 +49,6 @@ def login(request):
 def logout(request):
     request.user.auth_token.delete()
     return Response({"success":"Successfully logged out"}, status=status.HTTP_200_OK)
-
-
-#
-# user address
-#
-
-@csrf_exempt
-@api_view(["GET"])
-def userAddressShow(request):
-    try:
-        queryset = UserAddress.objects.get(user=request.user)
-    except UserAddress.DoesNotExist:
-        return Response({"error": "No such address"}, status=status.HTTP_400_BAD_REQUEST)
-    serializer = UserAddressSerializer(queryset)
-    return Response(serializer.data)
-
-@csrf_exempt
-@api_view(["POST"])
-def userAddressCreate(request):
-    if UserAddress.objects.filter(user=request.user).exists():
-        return Response({"error": "Address already exists"}, status=status.HTTP_400_BAD_REQUEST)
-
-    serialized = UserAddressSerializer(data=request.data, context={'request': request})
-    if serialized.is_valid():
-        serialized.save()
-        return Response({"success": "Successfully created"}, status=status.HTTP_201_CREATED)
-    else:
-        return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
-
-@csrf_exempt
-@api_view(["PUT"])
-def userAddressUpdate(request):
-    if not UserAddress.objects.filter(user=request.user).exists():
-        return Response({"error": "Address does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-    serialized = UserAddressSerializer(UserAddress.objects.get(user=request.user), data=request.data, context={'request': request})
-    if serialized.is_valid():
-        serialized.save()
-        return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
-    else:
-        return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
-
-@csrf_exempt
-@api_view(["GET"])
-def userAddressCountriesList(request):
-    countries = UserAddressCountries.objects.all()
-    serialized = UserAddressCountriesSerializer(countries, many=True)
-    return Response(serialized.data)
-
-#
-# user payment methods
-#
-
-@csrf_exempt
-@api_view(["GET"])
-def userPaymentCreditCardShow(request):
-    try:
-        queryset = UserPaymentCreditCard.objects.get(user=request.user)
-    except UserPaymentCreditCard.DoesNotExist:
-        return Response({"error": "No such payment method"}, status=status.HTTP_400_BAD_REQUEST)
-    serializer = UserPaymentCreditCardSerializer(queryset)
-    return Response(serializer.data)
-
-@csrf_exempt
-@api_view(["POST"])
-def userPaymentCreditCardCreate(request):
-    if UserPaymentCreditCard.objects.filter(user=request.user).exists():
-        return Response({"error": "Payment method already exists"}, status=status.HTTP_400_BAD_REQUEST)
-
-    serialized = UserPaymentCreditCardSerializer(data=request.data, context={'request': request})
-    if serialized.is_valid():
-        serialized.save()
-        return Response({"success": "Successfully created"}, status=status.HTTP_201_CREATED)
-    else:
-        return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
-
-@csrf_exempt
-@api_view(["PUT"])
-def userPaymentCreditCardUpdate(request):
-    if not UserPaymentCreditCard.objects.filter(user=request.user).exists():
-        return Response({"error": "Payment method does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    serialized = UserPaymentCreditCardSerializer(UserPaymentCreditCard.objects.get(user=request.user), data=request.data, context={'request': request})
-    if serialized.is_valid():
-        serialized.save()
-        return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
-    else:
-        return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 #
 # book operations

@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from book.models import UserAddress, UserAddressCountries, UserPaymentCreditCard, Book, Rental
+from book.models import Book, Rental
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,36 +11,17 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('first_name', 'last_name', 'username', 'password', 'email')
 
     def create(self, validated_data):
-        user = super(UserSerializer, self).create(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
-
-class UserAddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserAddress
-        fields = ('user', 'sex', 'street', 'street_number', 'postal_code', 'city', 'country', 'telephone')
-    user = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
-
-class UserAddressCountriesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserAddressCountries
-        fields = ('id', 'name', 'iso_code', 'isd_code')
-
-class UserPaymentCreditCardSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserPaymentCreditCard
-        fields = ('user', 'card_company', 'card_number', 'card_holder_name', 'expire_date_month', 'expire_date_year', 'cvv')
-    user = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
+        print(str(validated_data["email"]).split("@"))
+        if(str(validated_data["email"]).split("@")[1] == "code.berlin"):
+            user = super(UserSerializer, self).create(validated_data)
+            user.set_password(validated_data['password'])
+            user.save()
+            return user
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ('id', 'isbn', 'title', 'author', 'cover', 'price', 'owner')
+        fields = ('id', 'isbn', 'title', 'author', 'cover', 'topic', 'owner')
     owner = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
@@ -60,33 +41,21 @@ class RentalSerializer(serializers.ModelSerializer):
 class RentalShowBookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ('isbn', 'title', 'author', 'cover', 'price')
+        fields = ('isbn', 'title', 'author', 'cover', 'topic')
 
 class RentalShowOwnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
 
-class RentalShowOwnerAddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserAddress
-        fields = ('sex', 'street', 'street_number', 'postal_code', 'city', 'country', 'telephone')
-
 class RentalShowRenterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
-
-class RentalShowRenterAddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserAddress
-        fields = ('sex', 'street', 'street_number', 'postal_code', 'city', 'country', 'telephone')
 
 class RentalShowSerializer(serializers.Serializer):
     from_date = serializers.DateField()
     to_date = serializers.DateField()
     book = RentalShowBookSerializer()
     owner = RentalShowOwnerSerializer()
-    ownerAddress = RentalShowOwnerAddressSerializer()
     renter = RentalShowRenterSerializer()
-    renterAddress = RentalShowRenterAddressSerializer()

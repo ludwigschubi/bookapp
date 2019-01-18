@@ -63,11 +63,11 @@ Required attributes: bookId
 
 * create/
 Allowed method: POST
-Required attributes: isbn, title, author, cover, price
+Required attributes: isbn, title, author, cover, topic
 
 * update/
 Allowed method: PUT
-Required attributes: isbn, title, author, cover, price
+Required attributes: isbn, title, author, cover, topic
 
 * destroy/<bookId>/
 Allowed method: GET
