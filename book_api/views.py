@@ -13,6 +13,17 @@ from django.forms.models import model_to_dict
 from book_api.serializers import UserSerializer
 from book_api.serializers import BookSerializer, RentalSerializer, RentalShowSerializer
 from book.models import Book, Rental
+from django.contrib.auth.models import User
+
+#
+# user operations
+#
+
+@csrf_exempt
+@api_view(["GET"])
+def user(request):
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
 
 
 #
