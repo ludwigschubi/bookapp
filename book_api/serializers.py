@@ -8,7 +8,7 @@ from book.models import Book, Rental
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'password', 'email')
+        fields = ('first_name', 'last_name', 'username', 'email')
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
