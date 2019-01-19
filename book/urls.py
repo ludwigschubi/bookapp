@@ -13,15 +13,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
-
+from django.contrib import admin
+from django.contrib.auth.views import logout
+from django.views.generic.base import RedirectView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('auth/', include('social_django.urls', namespace='social')),
     path('api/', include('book_api.urls')),
-    path('', include('book_webapp.urls'))
+    path('login/', RedirectView.as_view(url='/auth/login/google-oauth2/', permanent=False), name='login'),
+    path('logout/', logout, name='logout'),
+    path('', include('book_webapp.urls'), name='home')
 ]
 
 urlpatterns += staticfiles_urlpatterns()

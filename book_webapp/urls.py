@@ -4,5 +4,4 @@ from book_webapp.views import home, login
 
 urlpatterns = [
     path('', home),
-    path('login', login),
 ]

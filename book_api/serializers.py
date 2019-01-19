@@ -10,14 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('first_name', 'last_name', 'username', 'password', 'email')
 
-    def create(self, validated_data):
-        print(str(validated_data["email"]).split("@"))
-        if(str(validated_data["email"]).split("@")[1] == "code.berlin"):
-            user = super(UserSerializer, self).create(validated_data)
-            user.set_password(validated_data['password'])
-            user.save()
-            return user
-
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
@@ -58,4 +50,4 @@ class RentalShowSerializer(serializers.Serializer):
     to_date = serializers.DateField()
     book = RentalShowBookSerializer()
     owner = RentalShowOwnerSerializer()
-    renter = RentalShowRenterSerializer()
+renter = RentalShowRenterSerializer()

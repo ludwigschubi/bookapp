@@ -1,11 +1,11 @@
 from django.db import models
-from django.forms import ModelForm
+#from django.forms import ModelForm
 from django.contrib.auth.models import User
 
     
 
 class Book(models.Model):
-    TOPICHOICES = (
+    TOPICCHOICES = (
         ("SE", "SE"),
         ("ID", "ID"),
         ("STS", "STS"),
@@ -17,8 +17,9 @@ class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
     cover = models.URLField(max_length=300)
-    topic = models.CharField(max_length=5, choices=TOPICHOICES)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    topic = models.CharField(max_length=5, choices=TOPICCHOICES)
+
+    # auther(multivalue), publisher, releasedate, edition, language
 
 class Rental(models.Model):
     renter = models.ForeignKey(User, on_delete=models.CASCADE)
