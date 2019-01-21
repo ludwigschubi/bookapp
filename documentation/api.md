@@ -1,97 +1,66 @@
 # API documentation
 
-## Authentication -> /api/auth/
-
-* register/
-Allowed method: POST
-Required attributes: username, first_name, last_name, password, email
+## Authentication -> /
 
 * login/
-Allowed method: POST
-Required attributes: username, password
+Forwards to the Google oauth2 login screen.
+The login returns the cookies sessionId and csrftoken. For reading of the API only the sessionId cookie is required.
+For write access the csrftoken must be given in the header X-CSRFToken.
 
 * logout/
+Removes the session from the Django authentication system.
+
+
+## UserProfile -> /api/userProfile
+
+* /
+Allowed method: GET
+Required arguments: None
+Optional arguments: None
+Description: Returns details about the logged in user.
+
+
+## Books -> /api/book
+
+* /<bookId>/
+Allowed method: GET
+Required arguments: None
+Optional arguments: bookId
+Description: Returns a list of all books or a single book.
+
+
+## Search -> /api/search
+
+* /<searchTerm>/
+Allowed method: GET
+Required arguments: searchTerm
+Optional arguments: None
+Description: Returns a full text search of books in the database.
+
+
+## Loan -> /api/loan
+
+* /<bookCopyId>/
+Allowed method: GET
+Required arguments: NONE
+Optional arguments: bookCopyId
+Description: Returns list of all or a single loan.
+
+* /
 Allowed method: POST
-Required attributes: NONE
-
-
-## User Addresses -> /api/userAddress/
-
-* show/
-Allowed method: GET
-Required attributes: NONE
-
-* create/
-Allowed method: POST
-Required attributes: sex, street, street_number, postal_code, city, country, telephone
-
-* update/
-Allowed method: PUT
-Required attributes: sex, street, street_number, postal_code, city, country, telephone
-
-
-## User Payment -> /api/payment/
-
-### User Payment Credit Card -> /api/payment/creditCard/
-
-* show/
-Allowed method: GET
-Required attributes: NONE
-
-* create/
-Allowed method: POST
-Required attributes: card_company, card_number, card_holder_name, expire_date_month, expire_date_year, cvv
-
-* update/
-Allowed method: PUT
-Required attributes: card_company, card_number, card_holder_name, expire_date_month, expire_date_year, cvv
-
-
-## Books -> /api/book/
-
-* list/
-Allowed method: GET
-Required attributes: NONE
-
-* listOwn/
-Allowed method: GET
-Required attributes: NONE
-
-* show/<bookId>/
-Allowed method: GET
-Required attributes: bookId
-
-* create/
-Allowed method: POST
-Required attributes: isbn, title, author, cover, topic
-
-* update/
-Allowed method: PUT
-Required attributes: isbn, title, author, cover, topic
-
-* destroy/<bookId>/
-Allowed method: GET
-Required attributes: bookId
-
-* search/               # NOT IMPLEMENTED #
-Allowed method: GET
-Required attributes:
-
-
-## Rental -> /api/rental/
-
-* list/
-Allowed method: GET
-Required attributes: NONE
-Description: Returns rental list of authenticated user
-
-* show/<rentalId>/
-Allowed method: GET
-Required attributes: rentalId
-Description: Returns details of requested rental entry, including the owner, renter and book details
-
-* create/
-Allowed method: POST
-Required attributes: book, from_date, to_date
-Description: Creates rental of requested book
+Required arguments: bookCopyId, from_date, to_date
+Optional arguments: None
+Description: Creates loan of requested copy of a book.
 Example (json): {"book": 2, "from_date": "2019-01-01", "to_date": "2019-01-15"}
+
+* /<loanId>/
+Allowed method: DELETE
+Required arguments: loanId
+Optional arguments: None
+Description: Deletes loan of a given copy of a book.
+
+* /loanOwn/
+Allowed method: GET
+Required arguments: None
+Optional arguements: None
+Description: Returns a list with all the loans of the logged in user.
