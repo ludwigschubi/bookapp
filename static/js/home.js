@@ -1,6 +1,7 @@
 $('document').ready(function(){
     $('.sidenav').sidenav();
     M.AutoInit();
+    loadBooks(token)
     setInterval(() => {
         if(token != undefined && loadBooksBool == true){
             loadBooks(token);
@@ -9,6 +10,13 @@ $('document').ready(function(){
         }
     }, 100000)
 })
+
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+  }
+  
 
 /***
  *    ███████╗██╗L██████╗L███╗LLL██╗██╗LLL██╗██████╗L
@@ -430,16 +438,38 @@ Required attributes: isbn, title, author, cover, price, owner*/
  *    LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
  */
 
+function getBookList(response){
+    var res = [];
+    response = response["results"];
+    var currBook;
+    for(var i = 0; i < response.length; i++){
+        var bookDict = {};
+        currBook = response[i];
+        bookDict["id"] = currBook["id"]
+        bookDict["title"] = currBook["title"]
+        bookDict["isbn"] = currBook["isbn"]
+        var author = currBook["author"][0]
+        bookDict["author"] = author["first_name"] + " " + author["last_name"]
+        bookDict["cover"] = currBook["cover"]
+        bookDict["category"] = currBook["category"]["name"]
+        bookDict["topic"] = currBook["topic"]["name"]
+        res.push(bookDict)
+    }
+    console.log(res);
+    return res;
+}
+
 function loadBooks(rental=false){
     var xhr = new XMLHttpRequest();
-    var apiEndpoint = "http://localhost:8000/api/book/list/";
+    var apiEndpoint = "http://localhost:8000/api/book/";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
         if(xhr.readyState === XMLHttpRequest.DONE){
             if(xhr.status == 200){
                 console.log(xhr.response);
-                displayBooks(xhr.response, rental);
+                var bookList = getBookList(xhr.response);
+                displayBooks(bookList, rental);
             }
         }
     };
@@ -544,9 +574,11 @@ function makeBookCard(book, rental){
             <span class="card-title"></span>
             </div>
             <div class="card-content">
+            <b>${book.title}</b>
             <p>This book was written by:<b>${book.author}</b></p>
             <p>ISBN: <b>${book.isbn}</b></p>
-            <b>${book.price}</b>
+            <p>Category: ${book.category}</p>
+            <p>Topic: ${book.topic}</p>
             </div>
             <div class="card-action" id="${book.id}">
             <p>From: <input type="date" min="2018-10-31" id="dateFrom${book.id}"</p>
