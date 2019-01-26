@@ -26,7 +26,7 @@ class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.ManyToManyField(BookAuthor)
     publisher = models.ForeignKey(BookPublisher, on_delete=models.CASCADE)
-    cover = models.ImageField()
+    cover = models.BinaryField()
     category = models.ForeignKey(BookCategory, on_delete=models.CASCADE)
     topic = models.ForeignKey(BookTopic, on_delete=models.CASCADE)
     edition = models.IntegerField()

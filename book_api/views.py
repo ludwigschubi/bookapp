@@ -4,6 +4,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from rest_framework import status, permissions, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from django.http import HttpResponse
 
 from book.models import Book as modelBook
 from book.models import BookCopies as modelBookCopies
@@ -46,6 +47,18 @@ class Book(generics.ListAPIView):
             return modelBook.objects.all().order_by('-id')
         else:
             return modelBook.objects.filter(id=id)
+
+class BookCover(generics.RetrieveAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def retrieve(self, request, id):
+        try:
+            book = modelBook.objects.get(id=id)
+        except modelBook.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not book.cover:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return HttpResponse(book.cover, status=status.HTTP_200_OK, content_type='image/jpeg')
 
 
 #
