@@ -86,8 +86,8 @@ class Loan(generics.ListCreateAPIView, generics.DestroyAPIView):
         if serialized.is_valid():
             # check if book copy exists and not already lent
             try:
-                book = modelBookCopies.objects.get(pk=request.data['book'])
-            except modelBookCopies.DoesNotExist:
+                book = modelBook.objects.get(pk=request.data['book'])
+            except modelBook.DoesNotExist:
                 return Response({'Error': 'Book does not exist'}, status=status.HTTP_400_BAD_REQUEST)
             if modelLoan.objects.filter(book_id=book.id).filter(Q(from_date__gte=request.data['from_date'], from_date__lt=request.data['to_date']) | Q(to_date__gt=request.data['from_date'], to_date__lte=request.data['to_date'])).exists():
                 return Response({'Error': 'Book already lent for given date duration'}, status=status.HTTP_400_BAD_REQUEST)
