@@ -62,7 +62,6 @@
                 var parts = value.split("; " + name + "=");
                 if (parts.length == 2) return parts.pop().split(";").shift();
             }
-            
             token = getCookie("csrftoken")
             if (token == undefined) {
                 window.location = "http://localhost:8000/login";

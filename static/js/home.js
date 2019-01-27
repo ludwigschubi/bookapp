@@ -51,10 +51,27 @@ function renderUser(user){
         <div class="col s10 offset-s1">
             <div class="row">
                 <p>You are currently logged in as: ${user["first_name"]} ${user["last_name"]}!</p>
-                <a class="waves-effect waves-light btn-small" id="logoutButton">Logout<i class="material-icons right">send</i></a>
+                <a class="waves-effect waves-light btn-small" onclick="logout()">Logout</a>
             </div>
         </div>
         </div>
+        <script>
+            function logout(){
+                var xhr = new XMLHttpRequest();
+                var url = "http://localhost:8000/logout/"
+            
+                xhr.responseType = "json"
+                xhr.onreadystatechange = () => {
+                    if(xhr.readyState === XMLHttpRequest.DONE){
+                        if(xhr.status == 200){
+                            console.log("[DEBUG] The user has been logged out");
+                        }
+                    }
+                }
+                xhr.open("GET", url);
+                xhr.send();
+            }
+        </script>
         `
     $('#logoutContainer').append(logoutString);
     $('#logoutContainer').addClass('z-depth-4')
@@ -70,20 +87,6 @@ $('#myAccount').click(function(){
     $('#searchBarContainer').empty();
     $('#addBookButton').removeClass('disabled');
     $('#myAccount').addClass('disabled');
-
-    $('#logoutButton').click(function(){
-        var xhr = XMLHttpRequest();
-        var url = "http://localhost:8000/api/logout"
-
-        xhr.responseType = "json"
-        xhr.onreadystatechange = () => {
-        if(xhr.readyState === XMLHttpRequest.DONE){
-            if(xhr.status == 200){
-                console.log("[DEBUG] The user has been logged out");
-            }
-        }
-    }
-    });
 });
 
 /***
@@ -263,13 +266,16 @@ function loadBooks(rental=false){
         if(xhr.readyState === XMLHttpRequest.DONE){
             if(xhr.status == 200){
                 var bookList = getBookList(xhr.response);
+                console.log(bookList)
                 displayBooks(bookList, rental);
+                /*for(var i = 0; i < bookList.length; i++){
+                    renderBookCovers(bookList[i]["id"]);
+                }*/
             }
         }
     };
 
     xhr.open("GET", apiEndpoint);
-    xhr.setRequestHeader("Authorization", "Token " + token)
     xhr.send();
 }
 
@@ -357,6 +363,24 @@ function displayBooks(fetchedBooks, rental=false){
 
         count += 1;
     };
+}
+
+function renderBookCovers(bookId){
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:8000/api/book/cover/" + bookId;
+
+    xhr.responseType = "jpeg";
+    xhr.onreadystatechange = () => {
+        if(xhr.readyState === XMLHttpRequest.DONE){
+            if(xhr.status == 200){
+                $("#" + bookId).attr("src", xhr.response);
+            }
+        }
+    };
+
+    xhr.open("GET", url);
+    xhr.setRequestHeader("X-CSRFToken", token)
+    xhr.send();
 }
 
 function makeBookCard(book, rental){
