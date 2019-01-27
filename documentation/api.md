@@ -28,6 +28,12 @@ Required arguments: None
 Optional arguments: bookId
 Description: Returns a list of all books or a single book.
 
+* /cover/<bookId>/
+Allowed method: GET
+Required arguements: bookId
+Optional arguements: None
+Description: Returns the cover of a single book. If book doesn't exist or field in database is empty it returns an http 404 error.
+
 
 ## Search -> /api/search
 
