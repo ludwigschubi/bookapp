@@ -24,14 +24,14 @@ class BookLanguage(models.Model):
 class Book(models.Model):
     isbn = models.CharField(max_length=20)
     title = models.CharField(max_length=100)
-    author = models.ManyToManyField(BookAuthor)
-    publisher = models.ForeignKey(BookPublisher, on_delete=models.CASCADE)
+    author = models.CharField(max_length=50)
+    publisher = models.CharField(max_length=20)
     cover = models.ImageField(upload_to="uploads/")
-    category = models.ForeignKey(BookCategory, on_delete=models.CASCADE)
-    topic = models.ForeignKey(BookTopic, on_delete=models.CASCADE)
+    category = models.CharField(max_length=3)
+    topic = models.CharField(max_length=20)
     edition = models.IntegerField()
     release_date = models.DateField()
-    language = models.ForeignKey(BookLanguage, on_delete=models.CASCADE)
+    language = models.CharField(max_length=20)
 
 class BookCopies(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)

@@ -1,10 +1,11 @@
 $('document').ready(function(){
     $('.sidenav').sidenav();
     M.AutoInit();
-    loadBooks(token)
+    loadBooks();
+    initializeSearch();
     setInterval(() => {
         if(token != undefined && loadBooksBool == true){
-            loadBooks(token);
+            loadBooks();
         }
     }, 100000)
 })
@@ -70,6 +71,8 @@ function renderUser(user){
                 }
                 xhr.open("GET", url);
                 xhr.send();
+
+                window.location = "http://localhost:8000/login";
             }
         </script>
         `
@@ -79,7 +82,7 @@ function renderUser(user){
 
 $('#myAccount').click(function(){
     showUser()
-    loadRentalList()
+    loadBooks(true)
 
     loadBooksBool = false;
     $('#bookContainer').empty();
@@ -102,7 +105,7 @@ $('#myAccount').click(function(){
 function initializeSearch(){
     let searchBooksString = `
     <div class="input-field" style="margin: 3rem;">
-        <input type="text" id="search" placeholder="Search for your favourite book!">
+        <input type="text" id="search" placeholder="Search for your favourite book! (By entering title, author, isbn, topic or category)">
     </div>
     `
 
@@ -246,12 +249,11 @@ function getBookList(response){
         currBook = response[i];
         bookDict["id"] = currBook["id"];
         bookDict["title"] = currBook["title"];
-        bookDict["isbn"] = currBook["isbn"];
-        var author = currBook["author"][0];
-        bookDict["author"] = author["first_name"] + " " + author["last_name"];
+        bookDict["isbn"] = currBook["isbn"];;
+        bookDict["author"] = currBook["author"];
         bookDict["cover"] = currBook["cover"];
-        bookDict["category"] = currBook["category"]["name"];
-        bookDict["topic"] = currBook["topic"]["name"];
+        bookDict["category"] = currBook["category"];
+        bookDict["topic"] = currBook["topic"];
         res.push(bookDict);
     }
     return res;
@@ -266,11 +268,11 @@ function loadBooks(rental=false){
         if(xhr.readyState === XMLHttpRequest.DONE){
             if(xhr.status == 200){
                 var bookList = getBookList(xhr.response);
-                console.log(bookList)
-                displayBooks(bookList, rental);
-                /*for(var i = 0; i < bookList.length; i++){
-                    renderBookCovers(bookList[i]["id"]);
-                }*/
+                if(rental == true){
+                    loadRentalList(bookList);
+                } else {
+                    displayBooks(bookList);
+                }
             }
         }
     };
@@ -281,27 +283,6 @@ function loadBooks(rental=false){
 
 function displayBooks(fetchedBooks, rental=false){
     $('#bookContainer').empty()
-
-    if(rental==true){
-        for(var count=0; count<fetchedBooks.length; count++){
-            var isRented = false;
-            for(var i=0; i<rentedBooks.length; i++){
-                if(rentedBooks[i].book == fetchedBooks[count].id){
-                    isRented = true;
-                }
-            }
-            if(isRented == false){
-                fetchedBooks[count] = null
-            }
-        }
-        var fetchedRentals = []
-        for(var count=0;count<fetchedBooks.length;count++){
-            if(fetchedBooks[count] != null){
-                fetchedRentals.push(fetchedBooks[count])
-            }
-        }
-        fetchedBooks = fetchedRentals
-    }
 
     var row = 0;
     var count = 0
@@ -317,7 +298,7 @@ function displayBooks(fetchedBooks, rental=false){
         let cover = fetchedBooks[i].cover;
         let price = fetchedBooks[i].price;*/
         let bookString = makeBookCard(fetchedBooks[count], rental);
-        if(count == fetchedBooks.length - 1){
+        if(count == fetchedBooks.length - 1 && rental == false){
             bookString += `
             <script>
                 function rentBook(id){
@@ -347,20 +328,6 @@ function displayBooks(fetchedBooks, rental=false){
             `
         }
         $('#bookRow' + row).append(bookString);
-
-        if(rental == true){
-            for(var count=0; count<fetchedBooks.length; count++){
-                for(var i=0; i<rentedBooks.length; i++){
-                    $('#' + fetchedBooks[count].id).empty();
-                    var rentalString = `
-                    <p>From: ${rentedBooks[i].from_date}</p>
-                    <p>To: ${rentedBooks[i].to_date}</p>
-                    `;
-                    $('#' + fetchedBooks[count].id).append(rentalString);
-                }
-            }
-        }
-
         count += 1;
     };
 }
@@ -383,7 +350,7 @@ function renderBookCovers(bookId){
     xhr.send();
 }
 
-function makeBookCard(book, rental){
+function makeBookCard(book, rental=false){
     var bookCardString = `
     <div class="col s4 m4">
         <div class="card">
@@ -393,20 +360,23 @@ function makeBookCard(book, rental){
             </div>
             <div class="card-content">
             <b>${book.title}</b>
-            <p>This book was written by:<b>${book.author}</b></p>
+            <p>This book was written by:<b> ${book.author}</b></p>
             <p>ISBN: <b>${book.isbn}</b></p>
             <p>Category: ${book.category}</p>
             <p>Topic: ${book.topic}</p>
             </div>
-            <div class="card-action" id="${book.id}">
-            <p>From: <input type="date" min="2018-10-31" id="dateFrom${book.id}"</p>
-            <p>To: <input type="date" min="2018-10-31" id="dateTo${book.id}"</p>
-            <a class="waves-effect waves-light btn-small" onclick="rentBook(${book.id})" id="book${book.id}">Rent this book</a>
-            </div>
-        </div>
-    </div>
     `;
-
+    if (rental == false){
+        bookCardString += `<div class="card-action" id="${book.id}">
+                <p>From: <input type="date" min="2018-10-31" id="dateFrom${book.id}"</p>
+                <p>To: <input type="date" min="2018-10-31" id="dateTo${book.id}"</p>
+                <a class="waves-effect waves-light btn-small" onclick="rentBook(${book.id})" id="book${book.id}">Rent this book</a>
+                </div>
+            </div>
+        </div>`
+    } else {
+        bookCardString += "</div></div>";
+    }
     return bookCardString;
 }
 
@@ -420,22 +390,34 @@ function makeBookCard(book, rental){
  *    LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
  */
 
-function loadRentalList(){
+function loadRentalList(bookList){
     var xhr = new XMLHttpRequest();
     var url = "http://localhost:8000/api/loanOwn";
 
     xhr.responseType = "json";
     xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE){
-            rentedBooks = getBookList(xhr.response);
-            console.log(rentedBooks)
-            loadBooks(true);
+            makeRentalList(bookList, xhr.response);
         };
     };
 
     xhr.open("GET", url);
-    xhr.setRequestHeader("Authorization", "Token " + token)
     xhr.send();
+}
+
+function makeRentalList(fetchedRentals, loans){
+    var loanIds = new Set();
+    for (var i = 0; i < loans.length; i++){
+        loanIds.add(loans[i]["book"]);
+    }
+
+    var res = [];
+    for(var j = 0; j < fetchedRentals.length; j++){
+        if (loanIds.has(fetchedRentals[j]["id"])){
+            res.push(fetchedRentals[j]);
+        }
+    }
+    displayBooks(res, true);
 }
 
 /***
