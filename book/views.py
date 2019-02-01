@@ -1,1 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import logout as django_logout
+
+def logout(request):
+    django_logout(request)
+    return redirect('/')
