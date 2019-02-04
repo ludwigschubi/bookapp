@@ -39,7 +39,7 @@ class BookCopies(models.Model):
 
 
 #
-# rental
+# loan
 #
 
 class Loan(models.Model):
