@@ -47,7 +47,7 @@ class BookLanguageSerializer(serializers.ModelSerializer):
 class BookCopiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookCopies
-        fields = ('id', 'book', 'date_added')
+        fields = ('id', 'date_added')
 
 class BookSerializer(serializers.ModelSerializer):
     #author = BookAuthorSerializer(many=True, read_only=True)
@@ -55,7 +55,7 @@ class BookSerializer(serializers.ModelSerializer):
     #category = BookCategorySerializer(read_only=True)
     #topic = BookTopicSerializer(read_only=True)
     #language = BookLanguageSerializer(read_only=True)
-    #copies = serializers.SerializerMethodField()
+    copies = serializers.SerializerMethodField()
 
     def get_copies(self, obj):
         serialized = BookCopiesSerializer(BookCopies.objects.filter(book=obj.id), many=True)
@@ -63,7 +63,7 @@ class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ('id', 'isbn', 'title', 'author', 'publisher', 'cover', 'category', 'topic', 'edition', 'release_date', 'language')
+        fields = ('id', 'isbn', 'title', 'author', 'publisher', 'cover', 'copies', 'category', 'topic', 'edition', 'release_date', 'language')
 
 
 #
