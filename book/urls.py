@@ -14,6 +14,3 @@ urlpatterns = [
     path('logout/', logout, name='logout'),
     path('', include('book_webapp.urls'), name='home')
 ]
-
-urlpatterns += staticfiles_urlpatterns()
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

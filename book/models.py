@@ -26,7 +26,7 @@ class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=50)
     publisher = models.CharField(max_length=20)
-    cover = models.ImageField(upload_to="uploads/")
+    cover = models.URLField(max_length=200)
     category = models.CharField(max_length=3)
     topic = models.CharField(max_length=20)
     edition = models.IntegerField()

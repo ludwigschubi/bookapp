@@ -48,18 +48,6 @@ class Book(generics.ListAPIView):
         else:
             return modelBook.objects.filter(id=id)
 
-class BookCover(generics.RetrieveAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def retrieve(self, request, id):
-        try:
-            book = modelBook.objects.get(id=id)
-        except modelBook.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        if not book.cover:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        return HttpResponse(book.cover, status=status.HTTP_200_OK, content_type='image/jpeg')
-
 
 #
 # search
