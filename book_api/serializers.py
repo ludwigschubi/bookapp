@@ -19,42 +19,12 @@ class UserSerializer(serializers.ModelSerializer):
 # book
 #
 
-class BookAuthorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BookAuthor
-        fields = ('first_name', 'last_name')
-
-class BookPublisherSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BookPublisher
-        fields = ('name',)
-
-class BookCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BookCategory
-        fields = ('name',)
-
-class BookTopicSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BookTopic
-        fields = ('name',)
-
-class BookLanguageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BookLanguage
-        fields = ('name',)
-
 class BookCopiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookCopies
         fields = ('id', 'date_added')
 
 class BookSerializer(serializers.ModelSerializer):
-    #author = BookAuthorSerializer(many=True, read_only=True)
-    #publisher = BookPublisherSerializer(read_only=True)
-    #category = BookCategorySerializer(read_only=True)
-    #topic = BookTopicSerializer(read_only=True)
-    #language = BookLanguageSerializer(read_only=True)
     copies = serializers.SerializerMethodField()
 
     def get_copies(self, obj):
