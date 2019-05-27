@@ -1,22 +1,17 @@
-from django.urls import path, include
-from django.conf.urls import url
+from django.urls import path
 
-from book_api.views import register, login, logout
-from book_api.views import bookList, bookListOwn, bookShow, bookCreate, bookUpdate, bookDestroy, bookSearch
-from book_api.views import rentalList, rentalShow, rentalCreate
+from book_api.views import UserProfile
+from book_api.views import Book
+from book_api.views import Search
+from book_api.views import Loan
+from book_api.views import LoanOwn
 
 urlpatterns = [
-    path('auth/register/', register),
-    path('auth/login/', login),
-    path('auth/logout/', logout),
-    path('book/list/', bookList),
-    path('book/listOwn/', bookListOwn),
-    path('book/show/<int:bookId>/', bookShow),
-    path('book/create/', bookCreate),
-    path('book/update/<int:bookId>/', bookUpdate),
-    path('book/destroy/<int:bookId>/', bookDestroy),
-    path('book/search/', bookSearch),
-    path('rental/list/', rentalList),
-    path('rental/show/<int:rentalId>/', rentalShow),
-    path('rental/create/', rentalCreate)
+    path('userProfile/', UserProfile.as_view()),
+    path('book/', Book.as_view()),
+    path('book/<int:id>/', Book.as_view()),
+    path('search/<str:searchTerm>/', Search.as_view()),
+    path('loan/', Loan.as_view()),
+    path('loan/<int:id>/', Loan.as_view()),
+    path('loanOwn/', LoanOwn.as_view()),
 ]

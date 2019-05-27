@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-    {% block body %}
-        <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
-        <meta name="google-signin-client_id" content="269235375979-jps756b3obi21h41iebkes9vhakola7u.apps.googleusercontent.com">
-        {% load static %}
-        <script src="{% static "js/main.js" %}"></script>
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
-    {% endblock %}

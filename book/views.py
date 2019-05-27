@@ -1,6 +1,6 @@
-from django.shortcuts import render
-from django.template.loader import get_template
-from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import logout as django_logout
 
-def gsignin(request):
-	return render(request, "g-signin.html")
+def logout(request):
+    django_logout(request)
+    return redirect('/')

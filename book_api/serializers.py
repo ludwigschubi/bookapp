@@ -1,61 +1,56 @@
-from rest_framework import serializers
-
 from django.contrib.auth.models import User
 from django.db.models import Q
+from rest_framework import serializers
 
-from book.models import Book, Rental
+from book.models import Book, BookAuthor, BookPublisher, BookCategory, BookTopic, BookLanguage, BookCopies, Loan
+
+
+#
+# user
+#
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'password', 'email')
+        fields = ('id', 'first_name', 'last_name', 'username', 'email')
 
-    def create(self, validated_data):
-        print(str(validated_data["email"]).split("@"))
-        if(str(validated_data["email"]).split("@")[1] == "code.berlin"):
-            user = super(UserSerializer, self).create(validated_data)
-            user.set_password(validated_data['password'])
-            user.save()
-            return user
+
+#
+# book
+#
+
+class BookCopiesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookCopies
+        fields = ('id', 'date_added')
 
 class BookSerializer(serializers.ModelSerializer):
+    copies = serializers.SerializerMethodField()
+
+    def get_copies(self, obj):
+        serialized = BookCopiesSerializer(BookCopies.objects.filter(book=obj.id), many=True)
+        return  serialized.data
+
     class Meta:
         model = Book
-        fields = ('id', 'isbn', 'title', 'author', 'cover', 'topic', 'owner')
-    owner = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
+        fields = ('id', 'isbn', 'title', 'author', 'publisher', 'cover', 'copies', 'category', 'topic', 'edition', 'release_date', 'language')
 
-class RentalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rental
-        fields = ('renter', 'book', 'from_date', 'to_date')
-    renter = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
 
 #
-# rental
+# loan
 #
 
-class RentalShowBookSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Book
-        fields = ('isbn', 'title', 'author', 'cover', 'topic')
+class LoanSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    id = serializers.ReadOnlyField()
 
-class RentalShowOwnerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email')
+        model = Loan
+        fields = ('id', 'user', 'book', 'from_date', 'to_date')
 
-class RentalShowRenterSerializer(serializers.ModelSerializer):
+class LoanOwnSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+
     class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email')
-
-class RentalShowSerializer(serializers.Serializer):
-    from_date = serializers.DateField()
-    to_date = serializers.DateField()
-    book = RentalShowBookSerializer()
-    owner = RentalShowOwnerSerializer()
-    renter = RentalShowRenterSerializer()
+        model = Loan
+        fields = ('id', 'book', 'from_date', 'to_date')

@@ -13,7 +13,7 @@
         <header>
             <nav>
                 <div class="nav-wrapper">
-                    <a id="feedButton" class="brand-logo center"><img src="{% static 'img/bookt.png' %}" alt=""></a>
+                    <a id="feedButton" class="brand-logo center"><img style="width: 10%; margin-top: 2%;" src="{% static 'img/CODE.png' %}" alt=""></a>
                     <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
                         <!--<li><a class="waves-effect btn-flat" id="addBook">Add Book</a></li>-->
@@ -26,85 +26,17 @@
             </ul>
         </header>
         <main>
-            <div class="container" id="changeUserContainer">
+            <div class="container">
+                <div class="container" id="logoutContainer"></div>
+                <div class="container" id="newBookContainer"></div>
+                <div class="container z-depth-1" id="searchBarContainer"></div>
+                <div class="container" id="bookContainer"></div>
             </div>
-            <div class="container z-depth-4" id="loginForm">
-                <div class="row">
-                    <form class="col s4 offset-s1">
-                        <h5>Not signed up yet? Create an account:</h5>
-                        <div class="row">
-                            <div class="input-field col s6">
-                                <input type ="text" id="username">
-                                <label for="username">Username</label>
-                            </div>
-                            <div class="input-field col s6">
-                                    <input type ="password" id="password">
-                                    <label for="password">Password</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field col s6">
-                                <input type ="text" id="firstName">
-                                <label for="firstName">First Name</label>
-                            </div>
-                            <div class="input-field col s6">
-                                <input type ="text" id="lastName">
-                                <label for="lastName">Last Name</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <input type ="email" id="email">
-                                <label for="email">Email</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <a class="waves-effect waves-light btn" id="signupButton">Register<i class="material-icons right">add_circle</i></a>
-                        </div>
-                    </form>
-                    <form class="col s4 offset-s1">
-                        <h5>Signed up already? Log in:</h5>
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <input type="text" id="usernameInput">
-                                <label for="usernameInput">Username</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <input type="password" id="passwordInput">
-                                <label for="passwordInput">Password</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <a class="waves-effect waves-light btn" id="loginButton">Login<i class="material-icons right">account_circle</i></a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="container" id="newBookContainer"></div>
-            <div class="container z-depth-1" id="searchBarContainer"></div>
-            <div class="container" id="bookContainer"></div>
         </main>
         <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col l6 s12">
-                        <h5 class="white-text">About us</h5>
-                        <p class="grey-text text-lighten-4">Bookrent is a student project that tries to give people the books they want, for affordable prices.</p>
-                    </div>
-                    <div class="col l4 offset-l2 s12">
-                        <h5 class="white-text">Links</h5>
-                        <ul>
-                            <li><a class="grey-text text-lighten-3" href="#!">Feed</a></li>
-                            <li><a class="grey-text text-lighten-3" href="#!">My Profile</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
             <div class="footer-copyright">
                 <div class="container">
-                    © 2014 Copyright Text
+                    2018 v1.0
                 </div>
             </div>
         </footer>
@@ -112,11 +44,17 @@
         <script type="text/javascript" src="{% static "js/materialize.js"%}"></script>
         <script type="module" src="{% static "js/home.js"%}"></script>
         <script>
-            var token = "";
+            function getCookie(name) {
+                var value = "; " + document.cookie;
+                var parts = value.split("; " + name + "=");
+                if (parts.length == 2) return parts.pop().split(";").shift();
+            }
+            token = getCookie("csrftoken")
+            if (token == undefined) {
+                window.location = "http://localhost:8000/login";
+            }
             var user = {};
-            var login = false;
             var loadBooksBool = true;
-            var rentedBooks = [];
         </script>
     </body>
 {% endblock %}
